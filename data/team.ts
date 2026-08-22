@@ -1,0 +1,64 @@
+export interface TeamMember {
+  id: string;
+  name: string;
+  role: string;
+  color: string;
+  initials: string;
+  bio: string;
+  strengths: string[];
+  map: string[];
+  overlap: string[];
+}
+
+export const TEAM: TeamMember[] = [
+  {
+    id: "pritam",
+    name: "Pritam Routh",
+    role: "AI / ML ENGINEER · FULL-STACK & AGENTIC SYSTEMS",
+    color: "#b98bfa",
+    initials: "PR",
+    bio: "Builds intelligent systems that combine AI/ML, generative AI and agentic architecture — models that reason, agents that call tools, workflows that act. Backend, APIs and system architecture are part of the same build.",
+    strengths: [
+      "AI / ML",
+      "Generative AI",
+      "LLM Applications",
+      "AI Agents",
+      "Agentic Workflows",
+      "RAG",
+      "Tool Calling",
+      "Intelligent Automation",
+      "AI Integrations",
+      "Backend & API Development",
+      "Full-Stack Development",
+      "System Architecture",
+    ],
+    map: ["DATA", "MODEL", "LLM", "AGENT", "TOOLS", "API", "WORKFLOW", "ACTION"],
+    overlap: ["Backend", "APIs", "Full-stack", "Architecture", "Automation"],
+  },
+  {
+    id: "anjan",
+    name: "Anjan Karan",
+    role: "FULL-STACK ENGINEER · PRODUCT & AUTOMATION SYSTEMS",
+    color: "#6c9bff",
+    initials: "AK",
+    bio: "Engineers complete digital products from interface to infrastructure — frontend experiences, backend architecture, databases, APIs, integrations and automation. Turns business needs into production systems.",
+    strengths: [
+      "Frontend Development",
+      "Backend Development",
+      "Full-Stack Applications",
+      "React / Modern Web",
+      "API Development",
+      "Database Architecture",
+      "System Architecture",
+      "Business Applications",
+      "Workflow Automation",
+      "Integrations",
+      "Dashboards",
+      "Production Systems",
+    ],
+    map: ["INTERFACE", "FRONTEND", "API", "BACKEND", "DATABASE", "INTEGRATION", "AUTOMATION", "PRODUCT"],
+    overlap: ["Backend", "APIs", "Full-stack", "Architecture", "Automation"],
+  },
+];
+
+export const SHARED_OVERLAP = ["BACKEND", "APIs", "FULL-STACK", "ARCHITECTURE", "AUTOMATION"];

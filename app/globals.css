@@ -1,0 +1,215 @@
+:root {
+  --bg: #08090c;
+  --bg2: #0c0e12;
+  --surface: #111318;
+  --surface2: #171a20;
+  --border: #22262e;
+  --border-lit: #323844;
+  --text: #eef0f3;
+  --dim: #9aa3af;
+  --faint: #575f6c;
+  --blue: #6c9bff;
+  --violet: #b98bfa;
+  --amber: #f2b860;
+  --amber-dim: #7a6438;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 84px;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body), "Inter", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--amber);
+  color: #16110a;
+}
+
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-lit);
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--faint);
+}
+
+.pf-disp {
+  font-family: var(--font-display), "Space Grotesk", sans-serif;
+}
+.pf-mono {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  letter-spacing: 0.03em;
+}
+
+/* Global grid backdrop */
+.pf-grid-backdrop {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: linear-gradient(rgba(34, 38, 46, 0.14) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 38, 46, 0.14) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(circle at 50% 0%, black, transparent 78%);
+  -webkit-mask-image: radial-gradient(circle at 50% 0%, black, transparent 78%);
+}
+
+@keyframes pf-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+@keyframes pf-pulse-scale {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.7);
+    opacity: 0.35;
+  }
+}
+@keyframes pf-dash {
+  to {
+    stroke-dashoffset: -200;
+  }
+}
+@keyframes pf-flow {
+  to {
+    stroke-dashoffset: -40;
+  }
+}
+@keyframes pf-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes pf-scan {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+@keyframes pf-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes pf-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+@keyframes pf-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+@keyframes pf-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+@keyframes pf-ring-pulse {
+  0%,
+  100% {
+    opacity: 0.12;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+.pf-blink-cursor::after {
+  content: "▍";
+  animation: pf-blink 1s step-start infinite;
+  color: var(--amber);
+}
+
+.pf-btn {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 22px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  border: 1px solid var(--border-lit);
+  background: transparent;
+  color: var(--text);
+  text-decoration: none;
+}
+.pf-btn:hover {
+  border-color: var(--amber);
+  color: var(--amber);
+  transform: translateY(-1px);
+}
+.pf-btn-solid {
+  background: var(--text);
+  color: var(--bg);
+  border-color: var(--text);
+}
+.pf-btn-solid:hover {
+  background: var(--amber);
+  border-color: var(--amber);
+  color: #16110a;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
