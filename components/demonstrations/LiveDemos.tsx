@@ -11,6 +11,15 @@ import { FlowReveal } from "@/components/shared/FlowReveal";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
+// Clean a demo prompt into a plain chat-bubble sentence
+const bubbleText = (p: string) =>
+  p
+    .replace(/^>\s*/, "") // leading shell marker
+    .replace(/^customer messages?\s*:\s*/i, "") // "Customer messages:" tag
+    .replace(/^[“"]+/, "") // opening quote
+    .replace(/[”".]+$/, "") // closing quote / trailing dots
+    .trim();
+
 // Dummy agent replies per demo (a real backend comes later)
 const AGENT_REPLIES: Record<string, string> = {
   agent:
@@ -296,7 +305,7 @@ function AgentChat({
               {th.wa ? "YOU · NOW" : "CUSTOMER · NOW"}
             </div>
             <div style={{ fontSize: monoText ? 12 : 13, color: th.wa ? "#e9edef" : T.text, lineHeight: 1.5 }}>
-              {demo.prompt.replace(/^>\s*/, "")}
+              {bubbleText(demo.prompt)}
             </div>
             {th.wa && (
               <div
