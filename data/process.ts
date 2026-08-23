@@ -1,4 +1,4 @@
-﻿export interface ProcessStep {
+export interface ProcessStep {
   n: string;
   t: string;
   d: string;
@@ -18,7 +18,7 @@ export const PROCESS: ProcessStep[] = [
 export const ASSISTANT_KB = [
   {
     k: ["build", "what do you", "capabilities", "do you do"],
-    a: "PRAXEN builds complete digital systems: full-stack products, AI/ML systems, AI agents, agentic workflows, business automation, WhatsApp automation and API integrations — end to end, from interface to deployment.",
+    a: "VORGEN builds complete digital systems: full-stack products, AI/ML systems, AI agents, agentic workflows, business automation, WhatsApp automation and API integrations — end to end, from interface to deployment.",
   },
   {
     k: ["pritam", "pritam routh"],
@@ -62,16 +62,16 @@ export const ASSISTANT_KB = [
   },
   {
     k: ["team", "who", "two", "studio"],
-    a: "PRAXEN is a two-person technology studio — Pritam Routh (AI / ML Engineer) × Anjan Karan (Full-Stack Engineer). Shared capabilities: backend, APIs, full-stack, architecture and automation.",
+    a: "VORGEN is a two-person technology studio — Pritam Routh (AI / ML Engineer) × Anjan Karan (Full-Stack Engineer). Shared capabilities: backend, APIs, full-stack, architecture and automation.",
   },
   {
     k: ["hello", "hi", "hey", "what"],
-    a: "Hey — I'm a small agent demonstration built from this portfolio's own data. Ask about what PRAXEN builds, Pritam, Anjan, AI agents, WhatsApp automation or the stack.",
+    a: "Hey — I'm a small agent demonstration built from this portfolio's own data. Ask about what VORGEN builds, Pritam, Anjan, AI agents, WhatsApp automation or the stack.",
   },
 ];
 
 export const ASSISTANT_SUGGESTIONS = [
-  "What does PRAXEN build?",
+  "What does VORGEN build?",
   "Tell me about Pritam.",
   "Tell me about Anjan.",
   "What AI agents can you build?",
@@ -85,5 +85,5 @@ export function answerAssistant(q: string): string {
   const hit = ASSISTANT_KB.find((row) => row.k.some((kw) => lower.includes(kw)));
   return hit
     ? hit.a
-    : "I only answer from this portfolio's own content — try asking about what PRAXEN builds, Pritam, Anjan, AI agents, WhatsApp automation, or the stack.";
+    : "I only answer from this portfolio's own content — try asking about what VORGEN builds, Pritam, Anjan, AI agents, WhatsApp automation, or the stack.";
 }

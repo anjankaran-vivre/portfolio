@@ -22,7 +22,7 @@ const plex = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PRAXEN — Digital Systems Studio",
+  title: "VORGEN — Digital Systems Studio",
   description:
     "We design, build, automate, and deploy complete digital systems — full-stack products, AI agents, agentic workflows and business automation.",
 };

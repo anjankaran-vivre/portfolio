@@ -1,4 +1,4 @@
-﻿export interface AgentTool {
+export interface AgentTool {
   id: string;
   label: string;
   icon: string;
@@ -71,4 +71,4 @@ export const RUN_AGENT_SEQUENCE = [
 ] as const;
 
 export const KNOWLEDGE =
-  "PRAXEN is a two-person technology studio. We design, build, automate and deploy complete digital systems: full-stack products, AI/ML systems, AI agents, agentic workflows, business automation, WhatsApp automation and API integrations. Pritam Routh leads AI/ML, agents and agentic systems. Anjan Karan leads full-stack product engineering and automation systems. Capabilities overlap in backend, APIs, full-stack, architecture and automation.";
+  "VORGEN is a two-person technology studio. We design, build, automate and deploy complete digital systems: full-stack products, AI/ML systems, AI agents, agentic workflows, business automation, WhatsApp automation and API integrations. Pritam Routh leads AI/ML, agents and agentic systems. Anjan Karan leads full-stack product engineering and automation systems. Capabilities overlap in backend, APIs, full-stack, architecture and automation.";

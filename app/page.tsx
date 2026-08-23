@@ -11,6 +11,7 @@ import { Contact, Footer } from "@/components/contact/Contact";
 import { PortfolioAssistant } from "@/components/assistant/PortfolioAssistant";
 import { SystemStatus } from "@/components/os/SystemStatus";
 import { FlowBridge } from "@/components/shared/FlowBridge";
+import { ScrollReveal } from "@/components/shared/ScrollReveal";
 
 export default function Page() {
   return (
@@ -18,17 +19,33 @@ export default function Page() {
       <div className="pf-grid-backdrop" />
       <Nav />
       <Hero />
-      <SystemsSection />
-      <LiveDemos />
+      <ScrollReveal>
+        <SystemsSection />
+      </ScrollReveal>
+      <ScrollReveal>
+        <LiveDemos />
+      </ScrollReveal>
       <FlowBridge label="SYSTEM FLOW → AGENT LAB" />
-      <AgentLab />
-      <Projects />
+      <ScrollReveal>
+        <AgentLab />
+      </ScrollReveal>
+      <ScrollReveal>
+        <Projects />
+      </ScrollReveal>
       <FlowBridge label="→ TEAM THREAD" />
-      <Team />
-      <TechStack />
+      <ScrollReveal>
+        <Team />
+      </ScrollReveal>
+      <ScrollReveal>
+        <TechStack />
+      </ScrollReveal>
       <FlowBridge label="→ HOW WE BUILD" />
-      <Process />
-      <Contact />
+      <ScrollReveal>
+        <Process />
+      </ScrollReveal>
+      <ScrollReveal>
+        <Contact />
+      </ScrollReveal>
       <Footer />
       <SystemStatus />
       <PortfolioAssistant />

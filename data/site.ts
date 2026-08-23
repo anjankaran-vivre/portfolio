@@ -1,22 +1,22 @@
 export const site = {
-  name: "PRAXEN",
+  name: "VORGEN",
   brandline: "PRITAM × ANJAN",
   founderLine: "PRITAM ROUTH × ANJAN KARAN",
   positioning:
     "FULL-STACK · AI/ML · AGENTS · AUTOMATION · SYSTEMS",
-  headline: "WE BUILD DIGITAL SYSTEMS THAT THINK, WORK & SCALE.",
+  headline: "We design, build, automate & deploy digital systems that think, work & scale.",
   subhead:
-    "We design, build, automate, and deploy complete digital systems — from full-stack products and APIs to AI agents, intelligent workflows and business automation.",
-  email: "hello@praxen.studio",
+    "From full-stack products and APIs to AI agents, intelligent workflows and business automation.",
+  email: "hello@vorgen.studio",
 } as const;
 
 export const NAV_ITEMS = [
-  { id: "work", label: "Work" },
+  { id: "hero", label: "Home" },
   { id: "systems", label: "Systems" },
-  { id: "agent-lab", label: "Agent Lab" },
-  { id: "team", label: "Team" },
-  { id: "stack", label: "Stack" },
-  { id: "about", label: "About" },
+  { id: "agent-lab", label: "Lab" },
+  { id: "work", label: "Work" },
+  { id: "team", label: "About" },
+  { id: "contact", label: "Contact" },
 ] as const;
 
 export const STATUS_LINES = [

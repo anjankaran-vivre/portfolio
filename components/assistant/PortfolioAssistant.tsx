@@ -62,7 +62,7 @@ export function PortfolioAssistant() {
             <div style={{ padding: "14px 16px", borderBottom: `1px solid ${T.border}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: T.bg2 }}>
               <div className="pf-mono" style={{ fontSize: 11, color: T.amber, letterSpacing: "0.06em" }}>
                 <span style={{ display: "inline-block", width: 7, height: 7, borderRadius: "50%", background: T.amber, marginRight: 8, animation: "pf-pulse 1.6s infinite" }} />
-                PRAXEN ASSISTANT
+                VORGEN ASSISTANT
               </div>
               <button onClick={() => setOpen(false)} style={{ background: "none", border: "none", color: T.faint, cursor: "pointer" }}>
                 <X size={16} />

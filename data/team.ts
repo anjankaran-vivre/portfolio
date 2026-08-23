@@ -32,7 +32,7 @@ export const TEAM: TeamMember[] = [
       "Full-Stack Development",
       "System Architecture",
     ],
-    map: ["DATA", "MODEL", "LLM", "AGENT", "TOOLS", "API", "WORKFLOW", "ACTION"],
+    map: ["DATA", "MODEL", "LLM", "AGENT", "TOOLS", "API", "WORKFLOW", "BACKEND"],
     overlap: ["Backend", "APIs", "Full-stack", "Architecture", "Automation"],
   },
   {

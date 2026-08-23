@@ -141,9 +141,21 @@ export function ThreadMerge() {
 
         <motion.g style={{ opacity: mergeProgress }}>
           <circle cx={CENTER_X} cy={MERGE_Y + 44} r={10} fill={T.bg2} stroke={T.amber} strokeWidth={2} />
-          <circle cx={CENTER_X} cy={MERGE_Y + 44} r={10} fill="none" stroke={T.amber} strokeOpacity={0.5} style={{ animation: "pf-pulse-scale 2s ease-out infinite" }} />
+          <circle
+            cx={CENTER_X}
+            cy={MERGE_Y + 44}
+            r={10}
+            fill="none"
+            stroke={T.amber}
+            strokeOpacity={0.5}
+            style={{
+              animation: "pf-pulse-scale 2s ease-out infinite",
+              transformBox: "fill-box",
+              transformOrigin: "center",
+            }}
+          />
           <text x={CENTER_X} y={MERGE_Y + 44 + 26} textAnchor="middle" className="pf-mono" fontSize="12" fill={T.amber} fontWeight="600" letterSpacing="0.14em">
-            PRAXEN
+            VORGEN
           </text>
           <text x={CENTER_X} y={MERGE_Y + 44 + 42} textAnchor="middle" className="pf-mono" fontSize="8.5" fill={T.faint} letterSpacing="0.1em">
             ONE SHARED SYSTEM
