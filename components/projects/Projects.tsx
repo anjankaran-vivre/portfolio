@@ -286,7 +286,7 @@ export function Projects() {
   const { setOpenId } = useCaseStudy();
 
   return (
-    <SectionWrap id="work">
+    <SectionWrap id="work" style={{ paddingTop: 56 }}>
       <Reveal>
         <Eyebrow color={T.blue}>Case Studies</Eyebrow>
         <h2 className="pf-disp" style={{ fontSize: "clamp(28px,4.5vw,46px)", fontWeight: 600, maxWidth: 760, letterSpacing: "-0.02em", margin: 0 }}>

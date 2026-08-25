@@ -7,7 +7,7 @@ import { Nav } from "@/components/navigation/Nav";
 import { Hero } from "@/components/hero/Hero";
 import { SystemsSection } from "@/components/systems/SystemsSection";
 import { LiveDemos } from "@/components/demonstrations/LiveDemos";
-import { AgentLab } from "@/components/agent-lab/AgentLab";
+import { LiveWork } from "@/components/live-work/LiveWork";
 import { Projects } from "@/components/projects/Projects";
 import { Team } from "@/components/team/Team";
 import { TechStack } from "@/components/technology/TechStack";
@@ -32,10 +32,11 @@ function PageContent() {
       <ScrollReveal>
         <LiveDemos />
       </ScrollReveal>
-      <FlowBridge label="SYSTEM FLOW → AGENT LAB" />
+      <FlowBridge label="SYSTEM FLOW → LIVE WORK" />
       <ScrollReveal>
-        <AgentLab />
+        <LiveWork />
       </ScrollReveal>
+      <FlowBridge label="→ CASE STUDIES" />
       <ScrollReveal>
         <Projects />
       </ScrollReveal>

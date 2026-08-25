@@ -332,7 +332,7 @@ export function Team() {
   const gap = useTransform(progress, [0, 0.30], [0, 24]);
 
   return (
-    <SectionWrap id="team">
+    <SectionWrap id="team" style={{ paddingTop: 56 }}>
       {/* Tall outer wrapper gives room to scroll smoothly through the animation */}
       <div ref={sectionRef} style={{ position: "relative", minHeight: "220vh" }}>
         

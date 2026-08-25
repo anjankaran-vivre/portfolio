@@ -13,7 +13,7 @@ export const site = {
 export const NAV_ITEMS = [
   { id: "hero", label: "Home" },
   { id: "systems", label: "Systems" },
-  { id: "agent-lab", label: "Lab" },
+  { id: "live-work", label: "Live" },
   { id: "work", label: "Work" },
   { id: "team", label: "About" },
   { id: "contact", label: "Contact" },
@@ -22,7 +22,7 @@ export const NAV_ITEMS = [
 export const STATUS_LINES = [
   "SYSTEM: OPERATIONAL",
   "BUILDERS: 2/2 ONLINE",
-  "AGENT LAB: LIVE",
+  "LIVE WORK: ONLINE",
   "STACK: TS · PY · NODE",
   "DEPLOY: READY",
   "AUTOMATION: RUNNING",

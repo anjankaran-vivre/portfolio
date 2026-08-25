@@ -38,7 +38,7 @@ const SECTION_TABS: ReadonlyArray<{ id: string; tab: string }> = [
   { id: "hero", tab: "hero" },
   { id: "systems", tab: "systems" },
   { id: "demos", tab: "systems" },
-  { id: "agent-lab", tab: "agent-lab" },
+  { id: "live-work", tab: "live-work" },
   { id: "work", tab: "work" },
   { id: "team", tab: "team" },
   { id: "stack", tab: "team" },
