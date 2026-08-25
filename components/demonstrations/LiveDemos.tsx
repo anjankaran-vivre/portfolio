@@ -10,6 +10,16 @@ import { Reveal } from "@/components/shared/Reveal";
 import { FlowReveal } from "@/components/shared/FlowReveal";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
+const STEP_MS = 700;
+
+// How many windows peek out behind the active one, and by how much.
+// Offsets grow but by a shrinking increment, so deeper windows huddle closer together.
+const STACK_OFFSETS = [
+  { x: 0, y: 0, scale: 1, opacity: 1 },
+  { x: -16, y: 14, scale: 0.965, opacity: 0.62 },
+  { x: -26, y: 24, scale: 0.936, opacity: 0.34 },
+];
+const MAX_VISIBLE_DEPTH = STACK_OFFSETS.length - 1;
 
 // Clean a demo prompt into a plain chat-bubble sentence
 const bubbleText = (p: string) =>
@@ -131,26 +141,39 @@ const TERMINAL_LOGS: Record<string, string[]> = {
   ],
 };
 
-// Right-side live AI agent chat
+type RunState = { step: number; running: boolean };
+type Phase = "idle" | "running" | "done";
+
+const phaseOf = (s: RunState | undefined): Phase =>
+  !s || s.step < 0 ? "idle" : s.running ? "running" : "done";
+
+// One live agent chat window — its own header, messages and status.
+// Rendered once per opened demo; the stack wrapper positions it in depth.
 function AgentChat({
   demo,
   phase,
   step,
+  front,
 }: {
   demo: Demo;
-  phase: "idle" | "running" | "done";
+  phase: Phase;
   step: number;
+  front: boolean;
 }) {
   const th = CHAT_THEMES[demo.id] ?? CHAT_THEMES.agent;
   const monoText = demo.id === "api";
+
+  // The message itself only "sends" once this window is front-most — a
+  // peeking background window stays quiet, even if it's mid-flow underneath.
+  const displayPhase: Phase = front ? phase : "idle";
 
   // Terminal demos: reveal log lines in sync with the left flow
   const logs = TERMINAL_LOGS[demo.id];
   const visibleCount =
     th.terminal && logs
-      ? phase === "idle"
+      ? displayPhase === "idle"
         ? 0
-        : phase === "done"
+        : displayPhase === "done"
           ? logs.length
           : Math.max(
               1,
@@ -181,6 +204,9 @@ function AgentChat({
         height: "100%",
         minHeight: 380,
         overflow: "hidden",
+        boxShadow: front
+          ? "0 20px 44px rgba(0,0,0,0.4)"
+          : "0 8px 20px rgba(0,0,0,0.32)",
       }}
     >
       {/* Header */}
@@ -228,8 +254,21 @@ function AgentChat({
             {th.sub}
           </span>
         </div>
-        <span className="pf-mono" style={{ marginLeft: "auto", fontSize: 8.5, color: T.faint, letterSpacing: "0.12em" }}>
-          DEMO
+        {/* Small indicator of which demo this window belongs to */}
+        <span
+          className="pf-mono"
+          style={{
+            marginLeft: "auto",
+            fontSize: 8.5,
+            color: front ? th.accent : T.faint,
+            letterSpacing: "0.1em",
+            border: `1px solid ${front ? `${th.accent}44` : T.border}`,
+            borderRadius: 4,
+            padding: "3px 6px",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {demo.name.toUpperCase()}
         </span>
       </div>
 
@@ -268,7 +307,7 @@ function AgentChat({
                 }}
               >
                 {l}
-                {phase === "running" && i === visibleCount - 1 && (
+                {displayPhase === "running" && i === visibleCount - 1 && (
                   <span style={{ animation: "pf-blink 1s infinite", marginLeft: 4 }}>▋</span>
                 )}
               </motion.div>
@@ -276,7 +315,7 @@ function AgentChat({
           </>
         ) : (
         <>
-        {phase === "idle" && (
+        {displayPhase === "idle" && (
           <div
             className="pf-mono"
             style={{ margin: "auto", textAlign: "center", fontSize: 10.5, color: T.faint, lineHeight: 1.8 }}
@@ -287,7 +326,7 @@ function AgentChat({
           </div>
         )}
 
-        {phase !== "idle" && (
+        {displayPhase !== "idle" && (
           <motion.div
             initial={{ opacity: 0, y: 16, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -318,7 +357,7 @@ function AgentChat({
           </motion.div>
         )}
 
-        {phase === "running" && (
+        {displayPhase === "running" && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -345,7 +384,7 @@ function AgentChat({
           </motion.div>
         )}
 
-        {phase === "done" && (
+        {displayPhase === "done" && (
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -404,194 +443,149 @@ function AgentChat({
   );
 }
 
-// Coordinates the left flow + the right live agent chat
-function DemoPanel({ demo }: { demo: Demo }) {
-  const [step, setStep] = useState(-1);
-  const [running, setRunning] = useState(false);
-  const timer = useRef<ReturnType<typeof setInterval> | null>(null);
-  const rootRef = useRef<HTMLDivElement>(null);
-  const autoRan = useRef(false);
-  const inView = useInView(rootRef, { once: true, amount: 0.3 });
-
-  useEffect(() => {
-    return () => {
-      if (timer.current) clearInterval(timer.current);
-    };
-  }, []);
-
-  const run = () => {
-    if (timer.current) clearInterval(timer.current);
-    setStep(0);
-    setRunning(true);
-    let i = 0;
-    timer.current = setInterval(() => {
-      i++;
-      if (i >= demo.steps.length) {
-        if (timer.current) clearInterval(timer.current);
-        setRunning(false);
-        setStep(demo.steps.length - 1);
-        return;
-      }
-      setStep(i);
-    }, 700);
-  };
-
-  const reset = () => {
-    if (timer.current) clearInterval(timer.current);
-    setStep(-1);
-    setRunning(false);
-  };
-
-  // Auto-run once when the panel scrolls into view
-  useEffect(() => {
-    if (!inView || autoRan.current) return;
-    autoRan.current = true;
-    const t = setTimeout(run, 600);
-    return () => clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inView]);
-
-  const phase = step < 0 ? "idle" : running ? "running" : "done";
-
+// Every opened demo keeps its own live window, layered behind the active one.
+// Clicking a peeking window brings that demo's session to the front, same as its tab.
+function ChatWindowStack({
+  openOrder,
+  runStates,
+  onBringToFront,
+}: {
+  openOrder: string[];
+  runStates: Record<string, RunState>;
+  onBringToFront: (id: string) => void;
+}) {
   return (
-    <div
-      ref={rootRef}
-      style={{
-        marginTop: 32,
-        border: `1px solid ${T.border}`,
-        borderRadius: 8,
-        padding: 28,
-        background: T.surface,
-      }}
-    >
-      <div className="pf-demo-grid">
-        {/* Left: request flow */}
-        <div style={{ minWidth: 0 }}>
-          <FlowReveal>
-            <div
-              className="pf-mono"
-              style={{
-                fontSize: 12,
-                color: T.dim,
-                marginBottom: 20,
-                padding: "12px 16px",
-                border: `1px solid ${T.border}`,
-                borderRadius: 4,
-                background: T.bg2,
-                display: "flex",
-                alignItems: "center",
-                gap: 10,
-                minHeight: 44,
-              }}
-            >
-              <span style={{ color: demo.color, flexShrink: 0 }}>{running ? "●" : ">"}</span>
-              <span>{demo.prompt}</span>
-            </div>
-          </FlowReveal>
+    <div style={{ position: "relative", height: "100%", minHeight: 380 }}>
+      {openOrder.map((id, i) => {
+        const demo = DEMOS.find((d) => d.id === id);
+        if (!demo) return null;
+        const depthRaw = openOrder.length - 1 - i; // 0 = front-most
+        const depth = Math.min(depthRaw, MAX_VISIBLE_DEPTH);
+        const front = depthRaw === 0;
+        const { x, y, scale, opacity } = STACK_OFFSETS[depth];
+        const hidden = depthRaw > MAX_VISIBLE_DEPTH;
+        const rs = runStates[id];
 
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            {demo.steps.map((s, i) => {
-              const activeNow = i === step;
-              const past = i < step;
-              const done = i <= step;
-              return (
-                <FlowReveal key={`${demo.id}-${i}`} delay={i * 110} from="top">
-                  <div style={{ display: "flex", gap: 14 }}>
-                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                      <div
-                        style={{
-                          width: 10,
-                          height: 10,
-                          borderRadius: "50%",
-                          border: `2px solid ${done ? demo.color : T.border}`,
-                          background: activeNow ? demo.color : "transparent",
-                          transition: "all .3s",
-                          animation: activeNow ? "pf-pulse-scale 1s ease-out infinite" : "none",
-                          flexShrink: 0,
-                          marginTop: 6,
-                        }}
-                      />
-                      {i < demo.steps.length - 1 && (
-                        <div
-                          style={{
-                            width: 1,
-                            flex: 1,
-                            minHeight: 24,
-                            background: past ? demo.color : T.border,
-                            transition: "background .3s",
-                          }}
-                        />
-                      )}
-                    </div>
-                    <div style={{ paddingBottom: 18, opacity: done ? 1 : 0.4, transition: "opacity .3s" }}>
-                      <div
-                        className="pf-mono"
-                        style={{
-                          fontSize: 12.5,
-                          color: activeNow ? demo.color : T.text,
-                          letterSpacing: "0.06em",
-                          transition: "color .3s",
-                        }}
-                      >
-                        {s.label}
-                      </div>
-                      {/* Always rendered so the layout never grows mid-run */}
-                      <div
-                        style={{
-                          fontSize: 13,
-                          color: T.dim,
-                          marginTop: 3,
-                          maxWidth: 420,
-                          lineHeight: 1.5,
-                          visibility: done ? "visible" : "hidden",
-                          opacity: done ? 1 : 0,
-                          transition: "opacity .35s ease",
-                        }}
-                      >
-                        {s.desc}
-                      </div>
-                    </div>
-                  </div>
-                </FlowReveal>
-              );
-            })}
-          </div>
-
-          <FlowReveal delay={demo.steps.length * 110}>
-            <div style={{ display: "flex", gap: 10, marginTop: 8, alignItems: "center" }}>
-              <button
-                className="pf-btn pf-btn-solid"
-                onClick={run}
-                disabled={running}
-                style={{ opacity: running ? 0.6 : 1, cursor: running ? "default" : "pointer" }}
-              >
-                {running ? <Radio size={13} /> : <Play size={13} />} {running ? "Running…" : "Run"}
-              </button>
-              <button className="pf-btn" onClick={reset}>
-                <RotateCcw size={13} /> Reset
-              </button>
-              <span className="pf-mono" style={{ marginLeft: "auto", fontSize: 10, color: T.faint }}>
-                {step < 0 ? "READY" : running ? `STEP ${step + 1}/${demo.steps.length}` : "COMPLETE"}
-              </span>
-            </div>
-          </FlowReveal>
-        </div>
-
-        {/* Right: live agent */}
-        <AgentChat demo={demo} phase={phase} step={step} />
-      </div>
-
-      <style>{`
-        .pf-demo-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:26px;align-items:stretch;}
-        @media(max-width:900px){.pf-demo-grid{grid-template-columns:1fr !important;}}
-      `}</style>
+        return (
+          <motion.div
+            key={id}
+            initial={{ opacity: 0, y: 36, scale: 0.94 }}
+            animate={{ opacity: hidden ? 0 : opacity, x, y, scale }}
+            transition={{ duration: 0.55, ease: EASE }}
+            onClick={front ? undefined : () => onBringToFront(id)}
+            style={{
+              position: "absolute",
+              inset: 0,
+              zIndex: i,
+              pointerEvents: hidden ? "none" : "auto",
+              cursor: front ? "default" : "pointer",
+              transformOrigin: "bottom left",
+            }}
+          >
+            <AgentChat demo={demo} phase={phaseOf(rs)} step={rs?.step ?? -1} front={front} />
+          </motion.div>
+        );
+      })}
     </div>
   );
 }
 
 export function LiveDemos() {
   const [active, setActive] = useState<string>(DEMOS[0].id);
+  const [openOrder, setOpenOrder] = useState<string[]>([DEMOS[0].id]);
+  const [runStates, setRunStates] = useState<Record<string, RunState>>({});
+  const timers = useRef<Record<string, ReturnType<typeof setInterval>>>({});
+  const startTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
+  const panelRef = useRef<HTMLDivElement>(null);
+  const wasInView = useRef(false);
+  // No `once` — re-entering the section (scroll away, then back) should
+  // replay the currently selected demo's message again, every time.
+  const inView = useInView(panelRef, { amount: 0.3 });
+
   const demo = DEMOS.find((d) => d.id === active)!;
+  const activeRun = runStates[active];
+  const step = activeRun?.step ?? -1;
+  const running = activeRun?.running ?? false;
+
+  useEffect(() => {
+    return () => {
+      Object.values(timers.current).forEach(clearInterval);
+      Object.values(startTimers.current).forEach(clearTimeout);
+    };
+  }, []);
+
+  // Always starts from the beginning — switching to a demo (even one you've
+  // already seen finish) replays the message send from scratch.
+  const runDemo = (id: string) => {
+    const target = DEMOS.find((d) => d.id === id);
+    if (!target) return;
+    if (timers.current[id]) clearInterval(timers.current[id]);
+
+    let i = 0;
+    setRunStates((prev) => ({ ...prev, [id]: { step: i, running: true } }));
+    timers.current[id] = setInterval(() => {
+      i++;
+      if (i >= target.steps.length) {
+        clearInterval(timers.current[id]);
+        delete timers.current[id];
+        setRunStates((prev) => ({ ...prev, [id]: { step: target.steps.length - 1, running: false } }));
+        return;
+      }
+      setRunStates((prev) => ({ ...prev, [id]: { step: i, running: true } }));
+    }, STEP_MS);
+  };
+
+  // Freezes a window's flow — used on the demo being replaced at the front,
+  // so only the front-most window keeps ticking. Also cancels any pending
+  // delayed start so a demo that's about to be backgrounded doesn't fire late.
+  const pauseDemo = (id: string) => {
+    if (timers.current[id]) {
+      clearInterval(timers.current[id]);
+      delete timers.current[id];
+    }
+    if (startTimers.current[id]) {
+      clearTimeout(startTimers.current[id]);
+      delete startTimers.current[id];
+    }
+  };
+
+  const resetDemo = (id: string) => {
+    pauseDemo(id);
+    setRunStates((prev) => ({ ...prev, [id]: { step: -1, running: false } }));
+  };
+
+  // Drops a demo back to idle immediately, then sends its message after a
+  // short beat — so it visibly "sends" instead of appearing already-sent.
+  const scheduleStart = (id: string, delay: number) => {
+    pauseDemo(id);
+    setRunStates((prev) => ({ ...prev, [id]: { step: -1, running: false } }));
+    startTimers.current[id] = setTimeout(() => {
+      delete startTimers.current[id];
+      runDemo(id);
+    }, delay);
+  };
+
+  // Bring a demo's window to the front and replay its message from the
+  // start — the demo being replaced at the front is paused.
+  const openDemo = (id: string) => {
+    if (id !== active) pauseDemo(active);
+    setActive(id);
+    setOpenOrder((prev) => (prev.includes(id) ? [...prev.filter((x) => x !== id), id] : [...prev, id]));
+    scheduleStart(id, 450);
+  };
+
+  // Replay the currently selected demo every time the panel re-enters view.
+  useEffect(() => {
+    if (inView && !wasInView.current) {
+      wasInView.current = true;
+      scheduleStart(active, 600);
+      return () => pauseDemo(active);
+    }
+    if (!inView) {
+      wasInView.current = false;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inView, active]);
 
   return (
     <section id="demos" style={{ background: T.bg2, borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, position: "relative", zIndex: 1 }}>
@@ -610,7 +604,7 @@ export function LiveDemos() {
           {DEMOS.map((d, i) => (
             <Reveal key={d.id} delay={i * 90}>
               <button
-                onClick={() => setActive(d.id)}
+                onClick={() => openDemo(d.id)}
                 className="pf-mono"
                 style={{
                   display: "inline-flex",
@@ -631,7 +625,138 @@ export function LiveDemos() {
           ))}
         </div>
 
-        <DemoPanel key={demo.id} demo={demo} />
+        <div
+          ref={panelRef}
+          style={{
+            marginTop: 32,
+            border: `1px solid ${T.border}`,
+            borderRadius: 8,
+            padding: 28,
+            background: T.surface,
+          }}
+        >
+          <div className="pf-demo-grid">
+            {/* Left: request flow for the active demo */}
+            <div key={active} style={{ minWidth: 0 }}>
+              <FlowReveal>
+                <div
+                  className="pf-mono"
+                  style={{
+                    fontSize: 12,
+                    color: T.dim,
+                    marginBottom: 20,
+                    padding: "12px 16px",
+                    border: `1px solid ${T.border}`,
+                    borderRadius: 4,
+                    background: T.bg2,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 10,
+                    minHeight: 44,
+                  }}
+                >
+                  <span style={{ color: demo.color, flexShrink: 0 }}>{running ? "●" : ">"}</span>
+                  <span>{demo.prompt}</span>
+                </div>
+              </FlowReveal>
+
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                {demo.steps.map((s, i) => {
+                  const activeNow = i === step;
+                  const past = i < step;
+                  const done = i <= step;
+                  return (
+                    <FlowReveal key={`${demo.id}-${i}`} delay={i * 110} from="top">
+                      <div style={{ display: "flex", gap: 14 }}>
+                        <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                          <div
+                            style={{
+                              width: 10,
+                              height: 10,
+                              borderRadius: "50%",
+                              border: `2px solid ${done ? demo.color : T.border}`,
+                              background: activeNow ? demo.color : "transparent",
+                              transition: "all .3s",
+                              animation: activeNow ? "pf-pulse-scale 1s ease-out infinite" : "none",
+                              flexShrink: 0,
+                              marginTop: 6,
+                            }}
+                          />
+                          {i < demo.steps.length - 1 && (
+                            <div
+                              style={{
+                                width: 1,
+                                flex: 1,
+                                minHeight: 24,
+                                background: past ? demo.color : T.border,
+                                transition: "background .3s",
+                              }}
+                            />
+                          )}
+                        </div>
+                        <div style={{ paddingBottom: 18, opacity: done ? 1 : 0.4, transition: "opacity .3s" }}>
+                          <div
+                            className="pf-mono"
+                            style={{
+                              fontSize: 12.5,
+                              color: activeNow ? demo.color : T.text,
+                              letterSpacing: "0.06em",
+                              transition: "color .3s",
+                            }}
+                          >
+                            {s.label}
+                          </div>
+                          {/* Always rendered so the layout never grows mid-run */}
+                          <div
+                            style={{
+                              fontSize: 13,
+                              color: T.dim,
+                              marginTop: 3,
+                              maxWidth: 420,
+                              lineHeight: 1.5,
+                              visibility: done ? "visible" : "hidden",
+                              opacity: done ? 1 : 0,
+                              transition: "opacity .35s ease",
+                            }}
+                          >
+                            {s.desc}
+                          </div>
+                        </div>
+                      </div>
+                    </FlowReveal>
+                  );
+                })}
+              </div>
+
+              <FlowReveal delay={demo.steps.length * 110}>
+                <div style={{ display: "flex", gap: 10, marginTop: 8, alignItems: "center" }}>
+                  <button
+                    className="pf-btn pf-btn-solid"
+                    onClick={() => runDemo(active)}
+                    disabled={running}
+                    style={{ opacity: running ? 0.6 : 1, cursor: running ? "default" : "pointer" }}
+                  >
+                    {running ? <Radio size={13} /> : <Play size={13} />} {running ? "Running…" : "Run"}
+                  </button>
+                  <button className="pf-btn" onClick={() => resetDemo(active)}>
+                    <RotateCcw size={13} /> Reset
+                  </button>
+                  <span className="pf-mono" style={{ marginLeft: "auto", fontSize: 10, color: T.faint }}>
+                    {step < 0 ? "READY" : running ? `STEP ${step + 1}/${demo.steps.length}` : "COMPLETE"}
+                  </span>
+                </div>
+              </FlowReveal>
+            </div>
+
+            {/* Right: layered stack of every demo's live agent window */}
+            <ChatWindowStack openOrder={openOrder} runStates={runStates} onBringToFront={openDemo} />
+          </div>
+
+          <style>{`
+            .pf-demo-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:26px;align-items:stretch;}
+            @media(max-width:900px){.pf-demo-grid{grid-template-columns:1fr !important;}}
+          `}</style>
+        </div>
       </div>
     </section>
   );

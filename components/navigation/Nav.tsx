@@ -60,7 +60,14 @@ export function Nav() {
 
   // Scroll-spy: highlight the nav tab of whichever section crosses the
   // active zone (~35% viewport height) while scrolling.
+  // While a case study is open, the normal sections aren't in the DOM at
+  // all, so just pin the tab to Work instead of falling through to Contact.
   useEffect(() => {
+    if (openId) {
+      setActive("work");
+      return;
+    }
+
     const tracked = SECTION_TABS.map((s) => ({
       tab: s.tab,
       el: document.getElementById(s.id),
@@ -87,7 +94,7 @@ export function Nav() {
       window.removeEventListener("scroll", pick);
       window.removeEventListener("resize", pick);
     };
-  }, []);
+  }, [openId]);
 
   const go = (id: string) => {
     if (openId) setOpenId(null);

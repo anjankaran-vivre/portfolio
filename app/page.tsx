@@ -2,6 +2,7 @@
 
 export const dynamic = "force-dynamic";
 
+import { useEffect, useRef } from "react";
 import { Nav } from "@/components/navigation/Nav";
 import { Hero } from "@/components/hero/Hero";
 import { SystemsSection } from "@/components/systems/SystemsSection";
@@ -19,6 +20,7 @@ import { ScrollReveal } from "@/components/shared/ScrollReveal";
 import { CaseStudyProvider, useCaseStudy } from "@/lib/case-study-context";
 import { PROJECTS } from "@/data/projects";
 import { CaseStudy } from "@/components/projects/Projects";
+import { scrollToSection } from "@/lib/scroll";
 
 function PageContent() {
   return (
@@ -67,7 +69,17 @@ function CaseStudyView() {
 
 function PageInner() {
   const { openId } = useCaseStudy();
-  
+  const prevOpenId = useRef<string | null>(null);
+
+  // Closing a case study should land back on the Work section it came
+  // from, not the top of the page (PageContent remounts scrolled to 0).
+  useEffect(() => {
+    if (prevOpenId.current && !openId) {
+      requestAnimationFrame(() => scrollToSection("work"));
+    }
+    prevOpenId.current = openId;
+  }, [openId]);
+
   return (
     <main style={{ position: "relative" }}>
       <div className="pf-grid-backdrop" />

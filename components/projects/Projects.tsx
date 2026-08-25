@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ArrowUpRight, X, ArrowLeft, ChevronRight } from "lucide-react";
 import { T } from "@/lib/theme";
@@ -41,15 +41,19 @@ function FlowRow({ label, items, color, id }: { label: string; items: string[]; 
 export function CaseStudy({ p }: { p: ProjectCase }) {
   const { setOpenId } = useCaseStudy();
   const onClose = () => setOpenId(null);
-  const contentRef = useRef<HTMLDivElement>(null);
   const [activeSection, setActiveSection] = useState<string>("problem");
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
+  // The content area isn't a bounded scroll pane (it grows to fit its content),
+  // so the page itself scrolls — the section spy has to track window scroll,
+  // not a scroll event on the content div (which never fires).
+  // Mount-only: `setOpenId` is a stable setState reference, so this never
+  // needs to re-run — re-running on every scroll-driven render would call
+  // window.scrollTo(0) on every tick and fight the user's own scrolling.
   useEffect(() => {
-    const el = contentRef.current;
-    if (el) el.scrollTop = 0;
+    window.scrollTo({ top: 0 });
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") setOpenId(null);
     };
     const onScroll = () => {
       let current = CASE_SECTIONS[0].id as string;
@@ -60,13 +64,14 @@ export function CaseStudy({ p }: { p: ProjectCase }) {
       setActiveSection(current);
     };
     window.addEventListener("keydown", onKey);
-    el?.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     return () => {
       window.removeEventListener("keydown", onKey);
-      el?.removeEventListener("scroll", onScroll);
+      window.removeEventListener("scroll", onScroll);
     };
-  }, [onClose]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const jumpTo = (id: string) => {
     document.getElementById(`cs-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -210,9 +215,8 @@ export function CaseStudy({ p }: { p: ProjectCase }) {
 
         {/* Main Content Area */}
         <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
-          {/* Scrollable Content */}
-          <div ref={contentRef} style={{ flex: 1, overflowY: "auto", maxWidth: 900, margin: "0 auto", padding: "28px 24px 120px", width: "100%" }}>
-            <div className="pf-mono" style={{ fontSize: 11, color: p.color, letterSpacing: "0.1em", marginBottom: 12 }}>{p.tag}</div>
+          {/* Content — scrolls with the page, alongside the sticky sidebar */}
+          <div style={{ flex: 1, maxWidth: 900, margin: "0 auto", padding: "100px 24px 120px", width: "100%" }}>
             <h2 className="pf-disp" style={{ fontSize: "clamp(30px,5vw,52px)", fontWeight: 600, letterSpacing: "-0.02em", margin: 0, maxWidth: 700 }}>
               {p.name}
             </h2>
