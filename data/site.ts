@@ -1,5 +1,5 @@
 export const site = {
-  name: "VORGEN",
+  name: "STACKLOOP",
   brandline: "PRITAM × ANJAN",
   founderLine: "PRITAM ROUTH × ANJAN KARAN",
   positioning:
@@ -7,7 +7,7 @@ export const site = {
   headline: "We design, build, automate & deploy digital systems that think, work & scale.",
   subhead:
     "From full-stack products and APIs to AI agents, intelligent workflows and business automation.",
-  email: "hello@vorgen.studio",
+  email: "hello@STACKLOOP.studio",
 } as const;
 
 export const NAV_ITEMS = [

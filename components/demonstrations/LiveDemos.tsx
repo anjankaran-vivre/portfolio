@@ -72,7 +72,7 @@ const CHAT_THEMES: Record<string, ChatTheme> = {
     accent: "#b98bfa",
   },
   whatsapp: {
-    title: "VORGEN BUSINESS",
+    title: "STACKLOOP BUSINESS",
     sub: "online",
     headerBg: "#202c33",
     bodyBg: "#0b141a",
@@ -399,7 +399,7 @@ function AgentChat({
             }}
           >
             <div className="pf-mono" style={{ fontSize: 8, letterSpacing: "0.14em", color: th.accent, marginBottom: 4 }}>
-              {th.wa ? "VORGEN AGENT · 11:02 AM" : "AGENT · JUST NOW"}
+              {th.wa ? "STACKLOOP AGENT · 11:02 AM" : "AGENT · JUST NOW"}
             </div>
             <div
               className={monoText ? "pf-mono" : undefined}

@@ -29,7 +29,7 @@ export function SystemStatus() {
       }}
     >
       <div style={{ fontSize: 10, color: T.text, letterSpacing: "0.12em", marginBottom: 10 }}>
-        VORGEN<span style={{ color: T.amber }}>.</span>OS
+        STACKLOOP<span style={{ color: T.amber }}>.</span>OS
       </div>
       <div style={{ fontSize: 9, color: T.faint, letterSpacing: "0.08em", marginBottom: 6 }}>SYSTEM</div>
       <div style={{ fontSize: 11, color: T.amber, marginBottom: 10 }}>

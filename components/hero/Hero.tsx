@@ -16,7 +16,7 @@ import {
 import { T } from "@/lib/theme";
 import { site } from "@/data/site";
 import { scrollToSection } from "@/lib/scroll";
-import { VorgenLogo } from "@/components/navigation/Nav";
+import { STACKLOOPLogo } from "@/components/navigation/Nav";
 
 // Hub-and-spoke system flow (reference layout: test.html hero visual)
 // Left column feeds data INTO the core, right column receives actions OUT of it.
@@ -281,7 +281,7 @@ function SystemFlow({
           {pulses.map((id) => (
             <span key={`${id}b`} className="sf-pulse" style={{ animationDelay: "0.22s" }} />
           ))}
-          <VorgenLogo size={38} />
+          <STACKLOOPLogo size={38} />
         </motion.div>
       </div>
 

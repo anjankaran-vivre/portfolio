@@ -8,7 +8,7 @@ import { NAV_ITEMS, STATUS_LINES } from "@/data/site";
 import { scrollToSection } from "@/lib/scroll";
 import { useCaseStudy } from "@/lib/case-study-context";
 
-export function VorgenLogo({ size = 20, style }: { size?: number; style?: React.CSSProperties }) {  return (
+export function STACKLOOPLogo({ size = 20, style }: { size?: number; style?: React.CSSProperties }) {  return (
     <svg
       width={size}
       height={size}
@@ -144,9 +144,9 @@ export function Nav() {
           }}
           onClick={() => go("hero")}
         >
-          <VorgenLogo size={20} />
+          <STACKLOOPLogo size={20} />
           <span>
-            VORGEN <span style={{ color: T.amber, fontSize: 13, fontWeight: 500 }}>×</span>{" "}
+            STACKLOOP <span style={{ color: T.amber, fontSize: 13, fontWeight: 500 }}>×</span>{" "}
             <span className="pf-mono" style={{ fontSize: 10, color: T.faint, fontWeight: 400, letterSpacing: "0.02em" }}>
               AK·PR
             </span>
