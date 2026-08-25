@@ -1,3 +1,7 @@
+"use client";
+
+export const dynamic = "force-dynamic";
+
 import { Nav } from "@/components/navigation/Nav";
 import { Hero } from "@/components/hero/Hero";
 import { SystemsSection } from "@/components/systems/SystemsSection";
@@ -12,12 +16,13 @@ import { PortfolioAssistant } from "@/components/assistant/PortfolioAssistant";
 import { SystemStatus } from "@/components/os/SystemStatus";
 import { FlowBridge } from "@/components/shared/FlowBridge";
 import { ScrollReveal } from "@/components/shared/ScrollReveal";
+import { CaseStudyProvider, useCaseStudy } from "@/lib/case-study-context";
+import { PROJECTS } from "@/data/projects";
+import { CaseStudy } from "@/components/projects/Projects";
 
-export default function Page() {
+function PageContent() {
   return (
-    <main style={{ position: "relative" }}>
-      <div className="pf-grid-backdrop" />
-      <Nav />
+    <>
       <Hero />
       <ScrollReveal>
         <SystemsSection />
@@ -49,6 +54,33 @@ export default function Page() {
       <Footer />
       <SystemStatus />
       <PortfolioAssistant />
+    </>
+  );
+}
+
+function CaseStudyView() {
+  const { openId } = useCaseStudy();
+  const project = PROJECTS.find((p) => p.id === openId);
+  if (!project) return null;
+  return <CaseStudy p={project} />;
+}
+
+function PageInner() {
+  const { openId } = useCaseStudy();
+  
+  return (
+    <main style={{ position: "relative" }}>
+      <div className="pf-grid-backdrop" />
+      <Nav />
+      {openId ? <CaseStudyView /> : <PageContent />}
     </main>
+  );
+}
+
+export default function Page() {
+  return (
+    <CaseStudyProvider>
+      <PageInner />
+    </CaseStudyProvider>
   );
 }

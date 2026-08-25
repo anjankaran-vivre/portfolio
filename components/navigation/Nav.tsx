@@ -6,6 +6,7 @@ import { ArrowRight } from "lucide-react";
 import { T } from "@/lib/theme";
 import { NAV_ITEMS, STATUS_LINES } from "@/data/site";
 import { scrollToSection } from "@/lib/scroll";
+import { useCaseStudy } from "@/lib/case-study-context";
 
 export function VorgenLogo({ size = 20, style }: { size?: number; style?: React.CSSProperties }) {  return (
     <svg
@@ -49,6 +50,7 @@ export function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState<string>("hero");
+  const { openId, setOpenId } = useCaseStudy();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -88,6 +90,7 @@ export function Nav() {
   }, []);
 
   const go = (id: string) => {
+    if (openId) setOpenId(null);
     scrollToSection(id);
     setOpen(false);
   };

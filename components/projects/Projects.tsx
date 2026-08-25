@@ -2,17 +2,28 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, ArrowUpRight, X, ArrowLeft } from "lucide-react";
+import { ArrowRight, ArrowUpRight, X, ArrowLeft, ChevronRight } from "lucide-react";
 import { T } from "@/lib/theme";
 import { PROJECTS, type ProjectCase } from "@/data/projects";
 import { SectionWrap } from "@/components/shared/SectionWrap";
 import { Eyebrow } from "@/components/shared/Eyebrow";
 import { Reveal } from "@/components/shared/Reveal";
 import { Tag } from "@/components/shared/Tag";
+import { useCaseStudy } from "@/lib/case-study-context";
 
-function FlowRow({ label, items, color }: { label: string; items: string[]; color: string }) {
+const CASE_SECTIONS = [
+  { id: "problem", num: "01", label: "PROBLEM" },
+  { id: "architecture", num: "02", label: "ARCHITECTURE" },
+  { id: "build", num: "03", label: "BUILD" },
+  { id: "ai", num: "04", label: "AI" },
+  { id: "automation", num: "05", label: "AUTOMATION" },
+  { id: "integration", num: "06", label: "INTEGRATION" },
+  { id: "result", num: "07", label: "RESULT" },
+] as const;
+
+function FlowRow({ label, items, color, id }: { label: string; items: string[]; color: string; id?: string }) {
   return (
-    <div>
+    <div id={id} style={{ scrollMarginTop: 100 }}>
       <div className="pf-mono" style={{ fontSize: 10, color, letterSpacing: "0.12em", marginBottom: 12 }}>{label}</div>
       <div style={{ display: "flex", flexDirection: "column" }}>
         {items.map((it, i) => (
@@ -27,172 +38,248 @@ function FlowRow({ label, items, color }: { label: string; items: string[]; colo
   );
 }
 
-function CaseStudy({ p, onClose }: { p: ProjectCase; onClose: () => void }) {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [scrolled, setScrolled] = useState(false);
+export function CaseStudy({ p }: { p: ProjectCase }) {
+  const { setOpenId } = useCaseStudy();
+  const onClose = () => setOpenId(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [activeSection, setActiveSection] = useState<string>("problem");
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   useEffect(() => {
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    const el = scrollRef.current;
+    const el = contentRef.current;
     if (el) el.scrollTop = 0;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
-    const onScroll = () => setScrolled((el?.scrollTop ?? 0) > 20);
+    const onScroll = () => {
+      let current = CASE_SECTIONS[0].id as string;
+      for (const s of CASE_SECTIONS) {
+        const sec = document.getElementById(`cs-${s.id}`);
+        if (sec && sec.getBoundingClientRect().top <= 120) current = s.id;
+      }
+      setActiveSection(current);
+    };
     window.addEventListener("keydown", onKey);
     el?.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
     return () => {
-      document.body.style.overflow = prev;
       window.removeEventListener("keydown", onKey);
       el?.removeEventListener("scroll", onScroll);
     };
   }, [onClose]);
 
+  const jumpTo = (id: string) => {
+    document.getElementById(`cs-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   return (
     <motion.div
-      ref={scrollRef}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.3 }}
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
+      initial={{ opacity: 0, x: 40 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -40 }}
+      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
       style={{
-        position: "fixed",
-        inset: 0,
-        zIndex: 80,
+        position: "relative",
+        zIndex: 10,
         background: `linear-gradient(180deg, ${T.bg} 0%, ${T.bg2} 100%)`,
-        overflowY: "auto",
+        minHeight: "100vh",
       }}
     >
-      {/* Sticky header bar — always visible while reading */}
-      <div
-        style={{
-          position: "sticky",
-          top: 0,
-          zIndex: 90,
-          background: scrolled ? `${T.bg}f5` : `${T.bg}88`,
-          backdropFilter: "blur(10px)",
-          WebkitBackdropFilter: "blur(10px)",
-          borderBottom: scrolled ? `1px solid ${T.border}` : "1px solid transparent",
-          transition: "all .25s",
-        }}
-      >
-        <div style={{ maxWidth: 900, margin: "0 auto", padding: "14px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
-          <button
-            onClick={onClose}
-            className="pf-mono"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-              background: T.surface2,
-              border: `1px solid ${T.borderLit}`,
-              color: T.text,
-              padding: "9px 14px",
-              borderRadius: 4,
-              fontSize: 11,
-              letterSpacing: "0.06em",
-              cursor: "pointer",
-              transition: "all .2s",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = T.amber;
-              e.currentTarget.style.color = T.amber;
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = T.borderLit;
-              e.currentTarget.style.color = T.text;
-            }}
-          >
-            <ArrowLeft size={14} /> Back
-          </button>
-          <div className="pf-mono" style={{ fontSize: 11, color: T.faint, letterSpacing: "0.08em", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-            {p.name.toUpperCase()}
+      {/* Layout: Sidebar + Content */}
+      <div style={{ display: "flex", minHeight: "100vh" }}>
+        {/* Left Sidebar - Section Navigation */}
+        <motion.aside
+          initial={{ opacity: 0, width: 0 }}
+          animate={{ opacity: 1, width: sidebarOpen ? 280 : 72 }}
+          transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          style={{
+            width: sidebarOpen ? 280 : 72,
+            minWidth: sidebarOpen ? 280 : 72,
+            background: `${T.bg}f0`,
+            borderRight: `1px solid ${T.border}`,
+            backdropFilter: "blur(10px)",
+            WebkitBackdropFilter: "blur(10px)",
+            display: "flex",
+            flexDirection: "column",
+            overflow: "hidden",
+            position: "sticky",
+            top: 72,
+            height: "calc(100vh - 72px)",
+            zIndex: 20,
+          }}
+        >
+          {/* Sidebar Header */}
+          <div style={{ padding: "20px 16px", borderBottom: `1px solid ${T.border}`, flexShrink: 0 }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+              <div className="pf-mono" style={{ fontSize: 10, color: p.color, letterSpacing: "0.1em" }}>{p.tag}</div>
+              <button
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                style={{ background: "none", border: "none", color: T.faint, cursor: "pointer", padding: 4, display: "flex" }}
+                aria-label={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
+              >
+                <ChevronRight size={16} style={{ transform: sidebarOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform .2s" }} />
+              </button>
+            </div>
+            {sidebarOpen && (
+              <>
+                <h3 className="pf-disp" style={{ fontSize: 18, fontWeight: 600, color: T.text, margin: 0, lineHeight: 1.3 }}>
+                  {p.name}
+                </h3>
+                <p style={{ color: T.dim, fontSize: 12.5, lineHeight: 1.5, marginTop: 8 }}>{p.headline}</p>
+              </>
+            )}
           </div>
-          <button
-            onClick={onClose}
-            className="pf-mono"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-              background: "none",
-              border: "none",
-              color: T.dim,
-              padding: "9px 10px",
-              borderRadius: 4,
-              fontSize: 11,
-              letterSpacing: "0.06em",
-              cursor: "pointer",
-              transition: "color .2s",
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = T.text)}
-            onMouseLeave={(e) => (e.currentTarget.style.color = T.dim)}
-          >
-            <X size={14} /> Esc
-          </button>
+
+          {/* Section Navigation */}
+          <nav style={{ flex: 1, overflowY: "auto", padding: "16px 12px" }}>
+            <div className="pf-mono" style={{ fontSize: 9, color: T.faint, letterSpacing: "0.15em", marginBottom: 16, padding: "0 8px" }}>SECTIONS</div>
+            {CASE_SECTIONS.map((s) => {
+              const isActive = activeSection === s.id;
+              return (
+                <button
+                  key={s.id}
+                  onClick={() => jumpTo(s.id)}
+                  style={{
+                    width: "100%",
+                    background: isActive ? `${p.color}15` : "transparent",
+                    border: "none",
+                    borderLeft: isActive ? `3px solid ${p.color}` : "3px solid transparent",
+                    borderRadius: "0 6px 6px 0",
+                    padding: "10px 12px",
+                    marginBottom: 6,
+                    cursor: "pointer",
+                    textAlign: "left",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 10,
+                    transition: "all .2s",
+                    color: isActive ? p.color : T.dim,
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = `${p.color}08`;
+                    e.currentTarget.style.color = p.color;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = isActive ? `${p.color}15` : "transparent";
+                    e.currentTarget.style.color = isActive ? p.color : T.dim;
+                  }}
+                >
+                  <span className="pf-mono" style={{ fontSize: 10, opacity: 0.7, minWidth: sidebarOpen ? "auto" : 24, textAlign: "center" }}>{s.num}</span>
+                  {sidebarOpen && <span style={{ fontSize: 11, letterSpacing: "0.05em", textTransform: "uppercase" }}>{s.label}</span>}
+                </button>
+              );
+            })}
+          </nav>
+
+          {/* Back Button at bottom of sidebar */}
+          <div style={{ padding: "16px", borderTop: `1px solid ${T.border}`, flexShrink: 0 }}>
+            <button
+              onClick={onClose}
+              className="pf-mono"
+              style={{
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: sidebarOpen ? "flex-start" : "center",
+                gap: 8,
+                background: T.surface2,
+                border: `1px solid ${T.borderLit}`,
+                color: T.text,
+                padding: "11px 14px",
+                borderRadius: 6,
+                fontSize: 11.5,
+                letterSpacing: "0.06em",
+                cursor: "pointer",
+                transition: "all .2s",
+                whiteSpace: "nowrap",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = T.amber;
+                e.currentTarget.style.color = T.amber;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = T.borderLit;
+                e.currentTarget.style.color = T.text;
+              }}
+            >
+              <ArrowLeft size={14} />
+              {sidebarOpen && <span>Back To Case Studies</span>}
+            </button>
+          </div>
+        </motion.aside>
+
+        {/* Main Content Area */}
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
+          {/* Scrollable Content */}
+          <div ref={contentRef} style={{ flex: 1, overflowY: "auto", maxWidth: 900, margin: "0 auto", padding: "28px 24px 120px", width: "100%" }}>
+            <div className="pf-mono" style={{ fontSize: 11, color: p.color, letterSpacing: "0.1em", marginBottom: 12 }}>{p.tag}</div>
+            <h2 className="pf-disp" style={{ fontSize: "clamp(30px,5vw,52px)", fontWeight: 600, letterSpacing: "-0.02em", margin: 0, maxWidth: 700 }}>
+              {p.name}
+            </h2>
+            <p style={{ color: T.dim, fontSize: 16, lineHeight: 1.6, marginTop: 14, maxWidth: 620 }}>{p.headline}</p>
+
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 20 }}>
+              {p.stack.map((s) => <Tag key={s} color={p.color}>{s}</Tag>)}
+            </div>
+
+            <div style={{ marginTop: 48, display: "flex", flexDirection: "column", gap: 26 }}>
+              <FlowRow id="cs-problem" label="01 · PROBLEM" items={[p.problem]} color={p.color} />
+              <FlowRow id="cs-architecture" label="02 · ARCHITECTURE" items={p.architecture} color={p.color} />
+              <FlowRow id="cs-build" label="03 · BUILD" items={p.build} color={p.color} />
+              <div id="cs-ai" style={{ scrollMarginTop: 100 }}>
+                <div className="pf-mono" style={{ fontSize: 10, color: p.color, letterSpacing: "0.12em", marginBottom: 12 }}>04 · AI</div>
+                <div style={{ fontSize: 13.5, color: T.text, lineHeight: 1.7, padding: "12px 16px 12px 20px", borderLeft: `2px solid ${p.color}`, background: `${p.color}0a`, borderRadius: 4 }}>
+                  {p.ai}
+                </div>
+              </div>
+              <div id="cs-automation" style={{ scrollMarginTop: 100 }}>
+                <div className="pf-mono" style={{ fontSize: 10, color: p.color, letterSpacing: "0.12em", marginBottom: 12 }}>05 · AUTOMATION</div>
+                <div style={{ fontSize: 13.5, color: T.text, lineHeight: 1.7, padding: "12px 16px 12px 20px", borderLeft: `2px solid ${T.amber}`, background: `${T.amber}0a`, borderRadius: 4 }}>
+                  {p.automation}
+                </div>
+              </div>
+              <FlowRow id="cs-integration" label="06 · INTEGRATION" items={p.integration} color={p.color} />
+              <div id="cs-result" style={{ scrollMarginTop: 100 }}>
+                <div className="pf-mono" style={{ fontSize: 10, color: T.amber, letterSpacing: "0.12em", marginBottom: 12 }}>07 · RESULT</div>
+                <div style={{ fontSize: 15, color: T.text, lineHeight: 1.7, padding: "16px 20px", border: `1px solid ${T.amber}44`, background: `${T.amber}0a`, borderRadius: 6 }}>
+                  {p.result}
+                </div>
+              </div>
+            </div>
+
+            <div style={{ marginTop: 44, display: "flex", gap: 12, flexWrap: "wrap" }}>
+              <a
+                href={`mailto:hello@praxen.studio?subject=${encodeURIComponent(`Project inquiry: ${p.name}`)}`}
+                className="pf-btn pf-btn-solid"
+                style={{ textDecoration: "none", display: "inline-flex" }}
+              >
+                Build Something Like This <ArrowUpRight size={14} />
+              </a>
+              <button className="pf-btn" onClick={onClose}>
+                <ArrowLeft size={13} /> Back To Case Studies
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div style={{ maxWidth: 900, margin: "0 auto", padding: "28px 24px 120px" }}>
-        <div className="pf-mono" style={{ fontSize: 11, color: p.color, letterSpacing: "0.1em", marginBottom: 12 }}>{p.tag}</div>
-        <h2 className="pf-disp" style={{ fontSize: "clamp(30px,5vw,52px)", fontWeight: 600, letterSpacing: "-0.02em", margin: 0, maxWidth: 700 }}>
-          {p.name}
-        </h2>
-        <p style={{ color: T.dim, fontSize: 16, lineHeight: 1.6, marginTop: 14, maxWidth: 620 }}>{p.headline}</p>
-
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 20 }}>
-          {p.stack.map((s) => <Tag key={s} color={p.color}>{s}</Tag>)}
-        </div>
-
-        <div style={{ marginTop: 48, display: "flex", flexDirection: "column", gap: 26 }}>
-          <FlowRow label="01 · PROBLEM" items={[p.problem]} color={p.color} />
-          <FlowRow label="02 · ARCHITECTURE" items={p.architecture} color={p.color} />
-          <FlowRow label="03 · BUILD" items={p.build} color={p.color} />
-          <div>
-            <div className="pf-mono" style={{ fontSize: 10, color: p.color, letterSpacing: "0.12em", marginBottom: 12 }}>04 · AI</div>
-            <div style={{ fontSize: 13.5, color: T.text, lineHeight: 1.7, padding: "12px 16px 12px 20px", borderLeft: `2px solid ${p.color}`, background: `${p.color}0a`, borderRadius: 4 }}>
-              {p.ai}
-            </div>
-          </div>
-          <div>
-            <div className="pf-mono" style={{ fontSize: 10, color: p.color, letterSpacing: "0.12em", marginBottom: 12 }}>05 · AUTOMATION</div>
-            <div style={{ fontSize: 13.5, color: T.text, lineHeight: 1.7, padding: "12px 16px 12px 20px", borderLeft: `2px solid ${T.amber}`, background: `${T.amber}0a`, borderRadius: 4 }}>
-              {p.automation}
-            </div>
-          </div>
-          <FlowRow label="06 · INTEGRATION" items={p.integration} color={p.color} />
-          <div>
-            <div className="pf-mono" style={{ fontSize: 10, color: T.amber, letterSpacing: "0.12em", marginBottom: 12 }}>07 · RESULT</div>
-            <div style={{ fontSize: 15, color: T.text, lineHeight: 1.7, padding: "16px 20px", border: `1px solid ${T.amber}44`, background: `${T.amber}0a`, borderRadius: 6 }}>
-              {p.result}
-            </div>
-          </div>
-        </div>
-
-        <div style={{ marginTop: 44, display: "flex", gap: 12, flexWrap: "wrap" }}>
-          <a
-            href={`mailto:hello@praxen.studio?subject=${encodeURIComponent(`Project inquiry: ${p.name}`)}`}
-            className="pf-btn pf-btn-solid"
-            style={{ textDecoration: "none", display: "inline-flex" }}
-          >
-            Build Something Like This <ArrowUpRight size={14} />
-          </a>
-          <button className="pf-btn" onClick={onClose}>
-            <ArrowLeft size={13} /> Back To Case Studies
-          </button>
-        </div>
-      </div>
+      <style>{`
+        @media (max-width: 1100px) {
+          aside { width: 72px !important; min-width: 72px !important; }
+          aside > div:first-child > div:last-child { display: none; }
+          aside nav button span:last-child { display: none; }
+          aside button:last-child span { display: none; }
+        }
+        @media (max-width: 768px) {
+          aside { display: none !important; }
+        }
+      `}</style>
     </motion.div>
   );
 }
 
 export function Projects() {
-  const [openId, setOpenId] = useState<string | null>(null);
-  const open = PROJECTS.find((p) => p.id === openId) ?? null;
+  const { setOpenId } = useCaseStudy();
 
   return (
     <SectionWrap id="work">
@@ -253,10 +340,6 @@ export function Projects() {
           </Reveal>
         ))}
       </div>
-
-      <AnimatePresence>
-        {open && <CaseStudy p={open} onClose={() => setOpenId(null)} />}
-      </AnimatePresence>
     </SectionWrap>
   );
 }
