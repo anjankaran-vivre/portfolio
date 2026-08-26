@@ -13,8 +13,8 @@ export const site = {
 export const NAV_ITEMS = [
   { id: "hero", label: "Home" },
   { id: "systems", label: "Systems" },
-  { id: "live-work", label: "Live" },
-  { id: "work", label: "Work" },
+  { id: "live-work", label: "Live Work" },
+  { id: "work", label: "Projects" },
   { id: "team", label: "About" },
   { id: "contact", label: "Contact" },
 ] as const;

@@ -23,10 +23,18 @@ export function STACKLOOPLogo({ size = 20, style }: { size?: number; style?: Rea
           <stop offset="100%" stopColor="#6c9bff" />
         </linearGradient>
       </defs>
-      <path
-        d="M3 3L10.5 20.5C11.3 22.5 12.7 22.5 13.5 20.5L21 3H16L12 13.5L8 3H3Z"
+      <text
+        x="12"
+        y="13.5"
+        textAnchor="middle"
+        dominantBaseline="central"
+        fontFamily="system-ui, -apple-system, 'Segoe UI', Arial, sans-serif"
+        fontWeight={900}
+        fontSize={23}
         fill="url(#v-logo-grad)"
-      />
+      >
+        S
+      </text>
     </svg>
   );
 }

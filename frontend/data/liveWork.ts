@@ -27,4 +27,13 @@ export const LIVE_SITES: LiveSite[] = [
     description: "Internal operations dashboard running the same business day to day.",
     color: "#b98bfa",
   },
+  {
+    id: "vivre-transcription",
+    name: "Vivre Transcription",
+    kind: "TRANSCRIPTION DASHBOARD",
+    url: "https://server3.vivrepanelserp.xyz/",
+    domain: "server3.vivrepanelserp.xyz",
+    description: "Live transcription dashboard, part of the same operations stack.",
+    color: "#f2b860",
+  },
 ];
