@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, ArrowUpRight, X, ArrowLeft, ChevronRight } from "lucide-react";
+import { ArrowRight, ArrowUpRight, X, ArrowLeft, ChevronRight, Book, Search, Lock } from "lucide-react";
 import { T } from "@/lib/theme";
 import { PROJECTS, type ProjectCase } from "@/data/projects";
 import { SectionWrap } from "@/components/shared/SectionWrap";
@@ -282,8 +282,75 @@ export function CaseStudy({ p }: { p: ProjectCase }) {
   );
 }
 
+// One repo-list row — GitHub's repository-list styling: icon + name +
+// visibility-style badge, description, then a language dot and topic chips.
+function ProjectRow({ p, index, onOpen }: { p: ProjectCase; index: number; onOpen: () => void }) {
+  const [primaryLang, ...restStack] = p.stack;
+  return (
+    <button
+      onClick={onOpen}
+      suppressHydrationWarning
+      style={{
+        width: "100%",
+        textAlign: "left",
+        background: "none",
+        border: "none",
+        borderTop: index === 0 ? "none" : `1px solid ${T.border}`,
+        padding: "20px 22px",
+        cursor: "pointer",
+        display: "block",
+        transition: "background .2s",
+      }}
+      onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.background = `${p.color}08`)}
+      onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.background = "none")}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+        <Book size={15} color={T.faint} style={{ flexShrink: 0 }} />
+        <span className="pf-disp" style={{ fontSize: 17, fontWeight: 600, color: p.color }}>{p.name}</span>
+        <span
+          className="pf-mono"
+          style={{
+            fontSize: 9.5,
+            letterSpacing: "0.06em",
+            color: T.faint,
+            border: `1px solid ${T.border}`,
+            borderRadius: 20,
+            padding: "2px 9px",
+          }}
+        >
+          {p.status}
+        </span>
+      </div>
+
+      <p style={{ color: T.dim, fontSize: 13.5, lineHeight: 1.55, margin: "8px 0 0", maxWidth: 640 }}>
+        {p.headline}
+      </p>
+
+      <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap", marginTop: 14 }}>
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12, color: T.dim, flexShrink: 0 }}>
+          <span style={{ width: 9, height: 9, borderRadius: "50%", background: p.color, display: "inline-block", flexShrink: 0 }} />
+          {primaryLang}
+        </span>
+        {restStack.slice(0, 4).map((s) => (
+          <span key={s} className="pf-mono" style={{ fontSize: 10, color: T.faint }}>{s}</span>
+        ))}
+        <span className="pf-mono" style={{ marginLeft: "auto", fontSize: 10, color: T.faint, display: "flex", alignItems: "center", gap: 5 }}>
+          OPEN CASE <ArrowRight size={11} />
+        </span>
+      </div>
+    </button>
+  );
+}
+
 export function Projects() {
   const { setOpenId } = useCaseStudy();
+  const [query, setQuery] = useState("");
+
+  const filtered = PROJECTS.filter((p) => {
+    const q = query.trim().toLowerCase();
+    if (!q) return true;
+    return p.name.toLowerCase().includes(q) || p.stack.some((s) => s.toLowerCase().includes(q));
+  });
 
   return (
     <SectionWrap id="work" style={{ paddingTop: 56 }}>
@@ -298,53 +365,103 @@ export function Projects() {
         </p>
       </Reveal>
 
-      <div style={{ marginTop: 44, display: "flex", flexDirection: "column", gap: 16 }}>
-        {PROJECTS.map((p, i) => (
-          <Reveal delay={i * 80} key={p.id}>
-            <button
-              className="pf-card"
-              onClick={() => setOpenId(p.id)}
-              suppressHydrationWarning
+      <Reveal delay={100}>
+        <div style={{ marginTop: 40, border: `1px solid ${T.border}`, borderRadius: 10, overflow: "hidden", background: T.bg2 }}>
+          {/* Window chrome */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+              padding: "12px 16px",
+              borderBottom: `1px solid ${T.border}`,
+              background: T.surface2,
+            }}
+          >
+            <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
+              {["#ff5f56", "#ffbd2e", "#27c93f"].map((c) => (
+                <span key={c} style={{ width: 9, height: 9, borderRadius: "50%", background: c }} />
+              ))}
+            </div>
+            <div
+              className="pf-mono"
               style={{
-                width: "100%",
-                textAlign: "left",
-                background: "none",
-                border: `1px solid ${T.border}`,
-                borderRadius: 8,
-                padding: 30,
-                cursor: "pointer",
-                transition: "all .3s",
+                flex: 1,
                 display: "flex",
                 alignItems: "center",
-                gap: 20,
-                flexWrap: "wrap",
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.borderColor = p.color;
-                (e.currentTarget as HTMLElement).style.background = `${p.color}08`;
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.borderColor = T.border;
-                (e.currentTarget as HTMLElement).style.background = "none";
+                gap: 7,
+                background: T.bg,
+                border: `1px solid ${T.border}`,
+                borderRadius: 5,
+                padding: "6px 12px",
+                fontSize: 11,
+                color: T.dim,
               }}
             >
-              <div className="pf-mono" style={{ fontSize: 11, color: p.color, letterSpacing: "0.1em", minWidth: 190 }}>
-                {String(i + 1).padStart(2, "0")} / {p.tag}
-              </div>
-              <div style={{ flex: 1, minWidth: 220 }}>
-                <div className="pf-disp" style={{ fontSize: 22, fontWeight: 600, color: T.text }}>{p.name}</div>
-                <div className="pf-mono" style={{ fontSize: 11, color: T.faint, marginTop: 6 }}>{p.status} CASE</div>
-              </div>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 6, maxWidth: 420 }}>
-                {p.stack.slice(0, 5).map((s) => <Tag key={s}>{s}</Tag>)}
-              </div>
-              <div className="pf-mono" style={{ fontSize: 11, color: T.dim, display: "flex", alignItems: "center", gap: 6, whiteSpace: "nowrap" }}>
-                OPEN CASE <ArrowRight size={13} />
-              </div>
-            </button>
-          </Reveal>
-        ))}
-      </div>
+              <Lock size={9} color={T.faint} style={{ flexShrink: 0 }} />
+              stackloop.dev/case-studies
+            </div>
+          </div>
+
+          {/* Repo-list header: search + count, like a GitHub repositories tab */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 14,
+              flexWrap: "wrap",
+              padding: "14px 22px",
+              borderBottom: `1px solid ${T.border}`,
+            }}
+          >
+            <div
+              className="pf-mono"
+              style={{
+                flex: "1 1 220px",
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                border: `1px solid ${T.border}`,
+                borderRadius: 6,
+                padding: "8px 12px",
+                fontSize: 12,
+                color: T.dim,
+              }}
+            >
+              <Search size={13} color={T.faint} style={{ flexShrink: 0 }} />
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Find a case study..."
+                suppressHydrationWarning
+                style={{
+                  border: "none",
+                  outline: "none",
+                  background: "none",
+                  color: T.text,
+                  fontFamily: "inherit",
+                  fontSize: "inherit",
+                  width: "100%",
+                }}
+              />
+            </div>
+            <span className="pf-mono" style={{ fontSize: 11, color: T.faint, whiteSpace: "nowrap" }}>
+              {filtered.length} case {filtered.length === 1 ? "study" : "studies"}
+            </span>
+          </div>
+
+          {/* Repo rows */}
+          {filtered.length > 0 ? (
+            filtered.map((p, i) => (
+              <ProjectRow key={p.id} p={p} index={i} onOpen={() => setOpenId(p.id)} />
+            ))
+          ) : (
+            <div className="pf-mono" style={{ padding: "40px 22px", textAlign: "center", fontSize: 12.5, color: T.faint }}>
+              No case studies match &ldquo;{query}&rdquo;.
+            </div>
+          )}
+        </div>
+      </Reveal>
     </SectionWrap>
   );
 }
