@@ -33,6 +33,7 @@ export function TechStack() {
               key={c}
               onClick={() => setFilter(c)}
               className="pf-mono"
+              suppressHydrationWarning
               style={{
                 padding: "9px 15px",
                 borderRadius: 4,

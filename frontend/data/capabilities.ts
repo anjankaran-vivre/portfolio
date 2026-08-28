@@ -17,8 +17,7 @@ export const CAPABILITIES: Capability[] = [
     icon: "layers",
     desc: "Complete digital products from interface to infrastructure.",
     flow: ["UI", "APPLICATION", "API", "BACKEND", "DATABASE", "DEPLOY"],
-    detail:
-      "Frontend + backend + databases + APIs + authentication + deployment — built as one coherent, deployable product, not disconnected layers.",
+    detail: "One coherent product — frontend to database, shipped end to end.",
     tags: ["React", "Next.js", "TypeScript", "Node.js", "APIs", "Databases", "Auth", "Deployment"],
   },
   {
@@ -28,8 +27,7 @@ export const CAPABILITIES: Capability[] = [
     icon: "cpu",
     desc: "Machine learning, generative AI and LLM applications.",
     flow: ["DATA", "FEATURES", "MODEL", "LLM", "INFERENCE", "PRODUCT"],
-    detail:
-      "Intelligent systems built on modern AI/ML foundations — generative AI, LLM applications and inference wired into real products.",
+    detail: "Generative AI and LLM applications, wired into real products.",
     tags: ["LLMs", "RAG", "ML", "Embeddings", "AI Pipelines", "Inference"],
   },
   {
@@ -39,8 +37,7 @@ export const CAPABILITIES: Capability[] = [
     icon: "bot",
     desc: "Agents that reason, access knowledge, use tools and act.",
     flow: ["USER", "AGENT", "KNOWLEDGE", "TOOLS", "APIS", "ACTION"],
-    detail:
-      "Reasoning systems that decide what to do, call the right tool, pull the right data and execute — not scripted chat replies.",
+    detail: "Agents that reason, pick the right tool, and act — not scripted replies.",
     tags: ["Reasoning", "Knowledge Access", "Tool Calling", "Action"],
   },
   {
@@ -50,8 +47,7 @@ export const CAPABILITIES: Capability[] = [
     icon: "workflow",
     desc: "Multi-step intelligent workflows combining AI, APIs and logic.",
     flow: ["TRIGGER", "AGENT", "DECISION", "TOOL", "ACTION", "COMPLETE"],
-    detail:
-      "Multi-step workflows where AI makes decisions and orchestrates APIs, tools and business logic toward a completed outcome.",
+    detail: "AI-orchestrated workflows across APIs, tools and business logic.",
     tags: ["Orchestration", "Decision Logic", "APIs", "Multi-Agent"],
   },
   {
@@ -61,8 +57,7 @@ export const CAPABILITIES: Capability[] = [
     icon: "zap",
     desc: "Business process automation and workflow orchestration.",
     flow: ["EVENT", "RULE", "WORKFLOW", "INTEGRATION", "ACTION", "RESULT"],
-    detail:
-      "Manual processes turned into automated digital workflows — triggers, orchestration and integrations doing the work.",
+    detail: "Manual work turned into automated, triggered digital workflows.",
     tags: ["Workflow Engines", "Webhooks", "Scheduling", "Orchestration"],
   },
   {
@@ -72,8 +67,7 @@ export const CAPABILITIES: Capability[] = [
     icon: "message",
     desc: "WhatsApp + AI + CRM + APIs + database + human handoff.",
     flow: ["CUSTOMER", "WHATSAPP", "AI", "BUSINESS LOGIC", "CRM", "HUMAN HANDOFF"],
-    detail:
-      "Conversational automation from customer message to resolved action — AI, business logic, CRM and human handoff where it matters.",
+    detail: "Customer messages resolved automatically — AI, CRM and human handoff.",
     tags: ["WhatsApp API", "AI", "CRM", "Database", "Human Handoff"],
   },
   {
@@ -83,8 +77,7 @@ export const CAPABILITIES: Capability[] = [
     icon: "server",
     desc: "Connect apps, services, databases, CRMs and platforms.",
     flow: ["SOURCE", "ADAPTER", "API", "MAP", "TARGET", "SYNC"],
-    detail:
-      "Applications, services, databases, CRMs, automation platforms and external APIs connected into a single operating workflow.",
+    detail: "Every system connected — APIs, CRMs and platforms in one workflow.",
     tags: ["REST", "Webhooks", "CRM", "Third-Party APIs", "Data Sync"],
   },
 ];

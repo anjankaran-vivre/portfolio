@@ -88,6 +88,7 @@ function BrowserWindow({ site, front }: { site: LiveSite; front: boolean }) {
             setKey((k) => k + 1);
           }}
           title="Reload"
+          suppressHydrationWarning
           style={{ background: "none", border: "none", color: T.faint, cursor: "pointer", display: "flex", flexShrink: 0, padding: 2 }}
         >
           <RefreshCw size={13} />
@@ -203,6 +204,7 @@ export function LiveWork() {
             <button
               onClick={() => setActive(s.id)}
               className="pf-mono"
+              suppressHydrationWarning
               style={{
                 display: "inline-flex",
                 flexDirection: "column",

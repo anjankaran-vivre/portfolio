@@ -304,6 +304,7 @@ export function Projects() {
             <button
               className="pf-card"
               onClick={() => setOpenId(p.id)}
+              suppressHydrationWarning
               style={{
                 width: "100%",
                 textAlign: "left",

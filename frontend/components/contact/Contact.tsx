@@ -64,6 +64,7 @@ function ContactCard() {
             type="text"
             placeholder="Your full name"
             style={inputStyle}
+            suppressHydrationWarning
             onFocus={(e) => (e.currentTarget.style.borderColor = `${T.violet}88`)}
             onBlur={(e) => (e.currentTarget.style.borderColor = T.border)}
           />
@@ -74,6 +75,7 @@ function ContactCard() {
             type="email"
             placeholder="you@company.com"
             style={inputStyle}
+            suppressHydrationWarning
             onFocus={(e) => (e.currentTarget.style.borderColor = `${T.violet}88`)}
             onBlur={(e) => (e.currentTarget.style.borderColor = T.border)}
           />
@@ -84,6 +86,7 @@ function ContactCard() {
         <select
           defaultValue="AI Agent / Assistant"
           style={{ ...inputStyle, cursor: "pointer" }}
+          suppressHydrationWarning
           onFocus={(e) => (e.currentTarget.style.borderColor = `${T.violet}88`)}
           onBlur={(e) => (e.currentTarget.style.borderColor = T.border)}
         >
@@ -109,6 +112,7 @@ function ContactCard() {
       <button
         type="submit"
         className="pf-btn pf-btn-solid"
+        suppressHydrationWarning
         style={{
           width: "100%",
           justifyContent: "center",

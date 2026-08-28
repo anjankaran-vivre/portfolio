@@ -138,6 +138,7 @@ export function PortfolioAssistant() {
       </AnimatePresence>
       <button
         onClick={() => setOpen((o) => !o)}
+        suppressHydrationWarning
         style={{
           width: 54,
           height: 54,

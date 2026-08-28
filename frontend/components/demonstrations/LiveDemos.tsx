@@ -606,6 +606,7 @@ export function LiveDemos() {
               <button
                 onClick={() => openDemo(d.id)}
                 className="pf-mono"
+                suppressHydrationWarning
                 style={{
                   display: "inline-flex",
                   padding: "10px 16px",
@@ -734,11 +735,12 @@ export function LiveDemos() {
                     className="pf-btn pf-btn-solid"
                     onClick={() => runDemo(active)}
                     disabled={running}
+                    suppressHydrationWarning
                     style={{ opacity: running ? 0.6 : 1, cursor: running ? "default" : "pointer" }}
                   >
                     {running ? <Radio size={13} /> : <Play size={13} />} {running ? "Running…" : "Run"}
                   </button>
-                  <button className="pf-btn" onClick={() => resetDemo(active)}>
+                  <button className="pf-btn" onClick={() => resetDemo(active)} suppressHydrationWarning>
                     <RotateCcw size={13} /> Reset
                   </button>
                   <span className="pf-mono" style={{ marginLeft: "auto", fontSize: 10, color: T.faint }}>

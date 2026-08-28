@@ -382,6 +382,33 @@ export function Hero() {
         zIndex: 1,
       }}
     >
+      {/* Background video — dimmed and scrimmed so the hero copy stays readable */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          zIndex: 0,
+          opacity: 0.3,
+        }}
+      >
+        <source src="/assets/apirun.mp4" type="video/mp4" />
+      </video>
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          zIndex: 1,
+          background: `linear-gradient(180deg, ${T.bg}b3 0%, ${T.bg}d9 45%, ${T.bg} 100%)`,
+        }}
+      />
+
       <div style={{ maxWidth: 1240, margin: "0 auto", position: "relative", zIndex: 2 }}>
         {/* Main Columns Grid */}
         <div
