@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, ArrowUpRight, X, ArrowLeft, ChevronRight, Book, Search, Lock } from "lucide-react";
+import { ArrowRight, ArrowUpRight, X, ArrowLeft, ChevronRight, Book, Search, Star, GitFork } from "lucide-react";
 import { T } from "@/lib/theme";
 import { PROJECTS, type ProjectCase } from "@/data/projects";
 import { SectionWrap } from "@/components/shared/SectionWrap";
@@ -10,6 +10,16 @@ import { Eyebrow } from "@/components/shared/Eyebrow";
 import { Reveal } from "@/components/shared/Reveal";
 import { Tag } from "@/components/shared/Tag";
 import { useCaseStudy } from "@/lib/case-study-context";
+
+// lucide-react drops brand/logo icons, so the GitHub mark is drawn directly —
+// the real octocat path, not a generic git-branch stand-in.
+function GithubMark({ size = 16, color = "currentColor" }: { size?: number; color?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 16 16" fill={color} style={{ flexShrink: 0 }}>
+      <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z" />
+    </svg>
+  );
+}
 
 const CASE_SECTIONS = [
   { id: "problem", num: "01", label: "PROBLEM" },
@@ -398,8 +408,50 @@ export function Projects() {
                 color: T.dim,
               }}
             >
-              <Lock size={9} color={T.faint} style={{ flexShrink: 0 }} />
-              stackloop.dev/case-studies
+              <GithubMark size={12} color={T.faint} />
+              github.com/stackloop
+            </div>
+          </div>
+
+          {/* Repo header: org/repo breadcrumb + Public badge + Star/Fork,
+              like the top of an actual GitHub repository page. */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+              flexWrap: "wrap",
+              padding: "16px 22px",
+              borderBottom: `1px solid ${T.border}`,
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
+              <GithubMark size={17} color={T.dim} />
+              <span className="pf-disp" style={{ fontSize: 15, color: T.dim }}>stackloop</span>
+              <span style={{ color: T.faint, fontSize: 15 }}>/</span>
+              <span className="pf-disp" style={{ fontSize: 15, fontWeight: 600, color: T.blue }}>case-studies</span>
+              <span
+                className="pf-mono"
+                style={{
+                  fontSize: 9.5,
+                  letterSpacing: "0.06em",
+                  color: T.faint,
+                  border: `1px solid ${T.border}`,
+                  borderRadius: 20,
+                  padding: "2px 9px",
+                  flexShrink: 0,
+                }}
+              >
+                Public
+              </span>
+            </div>
+            <div className="pf-mono" style={{ display: "flex", gap: 8, marginLeft: "auto", fontSize: 11, color: T.dim }}>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 5, border: `1px solid ${T.border}`, borderRadius: 5, padding: "5px 10px" }}>
+                <Star size={12} /> Star
+              </span>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 5, border: `1px solid ${T.border}`, borderRadius: 5, padding: "5px 10px" }}>
+                <GitFork size={12} /> Fork
+              </span>
             </div>
           </div>
 
