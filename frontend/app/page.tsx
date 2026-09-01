@@ -3,6 +3,7 @@
 export const dynamic = "force-dynamic";
 
 import { useEffect, useRef } from "react";
+import { MotionConfig } from "framer-motion";
 import { Nav } from "@/components/navigation/Nav";
 import { Hero } from "@/components/hero/Hero";
 import { SystemsSection } from "@/components/systems/SystemsSection";
@@ -17,6 +18,7 @@ import { PortfolioAssistant } from "@/components/assistant/PortfolioAssistant";
 import { SystemStatus } from "@/components/os/SystemStatus";
 import { FlowBridge } from "@/components/shared/FlowBridge";
 import { ScrollReveal } from "@/components/shared/ScrollReveal";
+import { AmbientCanopy } from "@/components/shared/AmbientCanopy";
 import { CaseStudyProvider, useCaseStudy } from "@/lib/case-study-context";
 import { PROJECTS } from "@/data/projects";
 import { CaseStudy } from "@/components/projects/Projects";
@@ -84,6 +86,7 @@ function PageInner() {
   return (
     <main style={{ position: "relative" }}>
       <div className="pf-grid-backdrop" />
+      <AmbientCanopy />
       <Nav />
       {openId ? <CaseStudyView /> : <PageContent />}
     </main>
@@ -92,8 +95,10 @@ function PageInner() {
 
 export default function Page() {
   return (
-    <CaseStudyProvider>
-      <PageInner />
-    </CaseStudyProvider>
+    <MotionConfig reducedMotion="user">
+      <CaseStudyProvider>
+        <PageInner />
+      </CaseStudyProvider>
+    </MotionConfig>
   );
 }

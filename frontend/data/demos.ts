@@ -16,7 +16,7 @@ export const DEMOS: Demo[] = [
     id: "agent",
     name: "AI Agent Demo",
     prompt: "> “What's the status of my order #4821?”",
-    color: "#b98bfa",
+    color: "#74bb7e",
     steps: [
       { label: "USER", desc: "Customer asks a question in plain language." },
       { label: "AI AGENT", desc: "Agent receives the message and begins reasoning." },
@@ -32,7 +32,7 @@ export const DEMOS: Demo[] = [
     id: "whatsapp",
     name: "WhatsApp Automation Demo",
     prompt: "> Customer messages: “I want to know about my order.”",
-    color: "#f2b860",
+    color: "#e3b462",
     steps: [
       { label: "CUSTOMER", desc: "Message arrives through the WhatsApp Business API." },
       { label: "WHATSAPP", desc: "Webhook receiver authenticates and parses the message." },
@@ -46,7 +46,7 @@ export const DEMOS: Demo[] = [
     id: "lead",
     name: "Lead Automation Demo",
     prompt: "> New inbound lead from a contact form.",
-    color: "#6c9bff",
+    color: "#4fa98c",
     steps: [
       { label: "LEAD", desc: "A lead is captured from a form or channel." },
       { label: "AI QUALIFICATION", desc: "Agent scores intent and fit from the lead's details." },
@@ -60,7 +60,7 @@ export const DEMOS: Demo[] = [
     id: "api",
     name: "API Demo",
     prompt: "> Frontend requests /orders/4821",
-    color: "#6c9bff",
+    color: "#4fa98c",
     steps: [
       { label: "FRONTEND", desc: "UI issues an authenticated request." },
       { label: "API", desc: "Route handler validates and authorizes." },
@@ -73,7 +73,7 @@ export const DEMOS: Demo[] = [
     id: "workflow",
     name: "AI Workflow Demo",
     prompt: "> Trigger: invoice_paid event",
-    color: "#b98bfa",
+    color: "#74bb7e",
     steps: [
       { label: "TRIGGER", desc: "A webhook event fires the workflow." },
       { label: "AGENT", desc: "Agent decides the next step from the event." },

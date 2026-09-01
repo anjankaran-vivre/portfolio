@@ -16,7 +16,7 @@ export const LIVE_SITES: LiveSite[] = [
     url: "https://vivrepanels.com/",
     domain: "vivrepanels.com",
     description: "Public-facing marketing site, live in production.",
-    color: "#6c9bff",
+    color: "#4fa98c",
   },
   {
     id: "vivre-erp",
@@ -25,7 +25,7 @@ export const LIVE_SITES: LiveSite[] = [
     url: "https://server2.vivrepanelserp.xyz/",
     domain: "server2.vivrepanelserp.xyz",
     description: "Internal operations dashboard running the same business day to day.",
-    color: "#b98bfa",
+    color: "#74bb7e",
   },
   {
     id: "vivre-transcription",
@@ -34,6 +34,6 @@ export const LIVE_SITES: LiveSite[] = [
     url: "https://server3.vivrepanelserp.xyz/",
     domain: "server3.vivrepanelserp.xyz",
     description: "Live transcription dashboard, part of the same operations stack.",
-    color: "#f2b860",
+    color: "#e3b462",
   },
 ];

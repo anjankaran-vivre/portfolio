@@ -7,6 +7,7 @@ import { site } from "@/data/site";
 import { Eyebrow } from "@/components/shared/Eyebrow";
 import { Magnetic } from "@/components/shared/Magnetic";
 import { Reveal } from "@/components/shared/Reveal";
+import { SectionPhoto } from "@/components/shared/SectionPhoto";
 
 const inputStyle: React.CSSProperties = {
   width: "100%",
@@ -138,7 +139,8 @@ function ContactCard() {
 export function Contact() {
   return (
     <section id="contact" style={{ padding: "150px 24px 100px", position: "relative", zIndex: 1 }}>
-      <div style={{ maxWidth: 1240, margin: "0 auto" }}>
+      <SectionPhoto src="/assets/tree-above.jpg" opacity={0.11} />
+      <div style={{ maxWidth: 1240, margin: "0 auto", position: "relative", zIndex: 1 }}>
         <div className="pf-contact-grid">
           {/* Left: pitch + direct CTA */}
           <Reveal>
@@ -171,7 +173,7 @@ export function Contact() {
               </div>
               <div className="pf-mono" style={{ display: "flex", justifyContent: "space-between", gap: 14, padding: "14px 0", borderBottom: `1px solid ${T.border}`, fontSize: 11 }}>
                 <span style={{ color: T.faint, letterSpacing: "0.1em" }}>RESPONSE TIME</span>
-                <span style={{ color: "#10b981" }}>&lt; 24 HOURS</span>
+                <span style={{ color: T.violet }}>&lt; 24 HOURS</span>
               </div>
               <div className="pf-mono" style={{ display: "flex", justifyContent: "space-between", gap: 14, padding: "14px 0", fontSize: 11 }}>
                 <span style={{ color: T.faint, letterSpacing: "0.1em" }}>TEAM</span>
@@ -218,7 +220,7 @@ export function Contact() {
         @media (max-width: 940px) {
           .pf-contact-grid { grid-template-columns: 1fr !important; gap: 48px !important; }
         }
-        .pf-contact-grid select option { background: #111318; color: #eef0f3; }
+        .pf-contact-grid select option { background: #141812; color: #f1eee3; }
       `}</style>
     </section>
   );

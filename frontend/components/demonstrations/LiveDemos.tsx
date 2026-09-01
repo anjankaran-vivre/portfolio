@@ -69,7 +69,7 @@ const CHAT_THEMES: Record<string, ChatTheme> = {
     userBorder: `${T.violet}40`,
     agentBg: T.surface2,
     agentBorder: T.border,
-    accent: "#b98bfa",
+    accent: "#74bb7e",
   },
   whatsapp: {
     title: "STACKLOOP BUSINESS",
@@ -92,7 +92,7 @@ const CHAT_THEMES: Record<string, ChatTheme> = {
     userBorder: `${T.blue}38`,
     agentBg: "#151a23",
     agentBorder: `${T.blue}26`,
-    accent: "#6c9bff",
+    accent: "#4fa98c",
   },
   api: {
     title: "~/api-console",
@@ -103,7 +103,7 @@ const CHAT_THEMES: Record<string, ChatTheme> = {
     userBorder: `${T.blue}30`,
     agentBg: "#0f1520",
     agentBorder: `${T.blue}22`,
-    accent: "#6c9bff",
+    accent: "#4fa98c",
     terminal: true,
   },
   workflow: {
@@ -115,7 +115,7 @@ const CHAT_THEMES: Record<string, ChatTheme> = {
     userBorder: `${T.amber}36`,
     agentBg: "#191713",
     agentBorder: `${T.amber}28`,
-    accent: "#f2b860",
+    accent: "#e3b462",
     terminal: true,
   },
 };
@@ -191,7 +191,7 @@ function AgentChat({
         ? "#3fb950"
         : l === "{" || l === "}" || l.trimStart().startsWith('"')
           ? "#79c0ff"
-          : "#9aa3af";
+          : "#a7ab98";
 
   return (
     <div

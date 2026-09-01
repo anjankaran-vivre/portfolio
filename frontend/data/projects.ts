@@ -20,7 +20,7 @@ export const PROJECTS: ProjectCase[] = [
     id: "ops",
     name: "Intelligent Operations Platform",
     tag: "CONCEPT SYSTEM · PLACEHOLDER CASE",
-    color: "#6c9bff",
+    color: "#4fa98c",
     headline: "One system where every inbound request reaches resolution.",
     problem:
       "Order status, customer replies and follow-ups were handled manually across spreadsheets and chat threads — no single source of truth, slow responses, and work that disappeared when people were away.",
@@ -47,7 +47,7 @@ export const PROJECTS: ProjectCase[] = [
     id: "concierge",
     name: "WhatsApp Sales Concierge",
     tag: "CONCEPT SYSTEM · PLACEHOLDER CASE",
-    color: "#b98bfa",
+    color: "#74bb7e",
     headline: "Every conversation handled, at every hour, in every channel.",
     problem:
       "Inbound WhatsApp inquiries about products and orders competed with the sales team's actual work, and responses were slow outside business hours.",

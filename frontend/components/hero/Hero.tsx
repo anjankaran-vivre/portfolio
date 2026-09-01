@@ -17,6 +17,7 @@ import { T } from "@/lib/theme";
 import { site } from "@/data/site";
 import { scrollToSection } from "@/lib/scroll";
 import { STACKLOOPLogo } from "@/components/navigation/Nav";
+import { SectionPhoto } from "@/components/shared/SectionPhoto";
 
 // Hub-and-spoke system flow (reference layout: test.html hero visual)
 // Left column feeds data INTO the core, right column receives actions OUT of it.
@@ -138,16 +139,16 @@ function FlowNodeCard({
         y: { duration: 0.25 },
       }}
       style={{
-        borderColor: active ? "rgba(185,139,250,0.5)" : T.border,
+        borderColor: active ? "rgba(116,187,126,0.5)" : T.border,
         boxShadow: active
-          ? "0 8px 22px rgba(185,139,250,0.16)"
+          ? "0 8px 22px rgba(116,187,126,0.16)"
           : "0 4px 12px rgba(0,0,0,0.4)",
       }}
     >
       <div className="sf-chip">
         <IconComponent
           size={15}
-          color={active ? T.violet : "#9aa3af"}
+          color={active ? T.violet : "#a7ab98"}
           strokeWidth={1.9}
           style={{ transition: "color 0.2s" }}
         />
@@ -197,8 +198,8 @@ function SystemFlow({
       <svg className="sf-lines" viewBox="0 0 400 520" preserveAspectRatio="none">
         <defs>
           <linearGradient id="sf-line-grad" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stopColor="#b98bfa" />
-            <stop offset="1" stopColor="#6c9bff" />
+            <stop offset="0" stopColor="#74bb7e" />
+            <stop offset="1" stopColor="#4fa98c" />
           </linearGradient>
         </defs>
 
@@ -212,7 +213,7 @@ function SystemFlow({
                 className="sf-line"
                 style={{ opacity: anyHovered && !active ? 0.12 : 0.55 }}
               />
-              <circle r="2.4" fill="#b98bfa" className="sf-packet">
+              <circle r="2.4" fill="#74bb7e" className="sf-packet">
                 <animateMotion
                   dur={`${3 + i * 0.45}s`}
                   begin={`${i * 0.55}s`}
@@ -234,7 +235,7 @@ function SystemFlow({
                 className="sf-line"
                 style={{ opacity: anyHovered && !active ? 0.12 : 0.55 }}
               />
-              <circle r="2.4" fill="#6c9bff" className="sf-packet">
+              <circle r="2.4" fill="#4fa98c" className="sf-packet">
                 <animateMotion
                   dur={`${3 + ((i + 2) % 4) * 0.45}s`}
                   begin={`${i * 0.55 + 0.9}s`}
@@ -267,10 +268,10 @@ function SystemFlow({
           whileTap={{ scale: 0.93 }}
           transition={{ type: "spring", stiffness: 320, damping: 18 }}
           style={{
-            borderColor: coreHovered ? "rgba(185,139,250,0.9)" : "rgba(185,139,250,0.4)",
+            borderColor: coreHovered ? "rgba(116,187,126,0.9)" : "rgba(116,187,126,0.4)",
             boxShadow: coreHovered
-              ? "0 0 80px rgba(185,139,250,0.45), inset 0 0 40px rgba(185,139,250,0.25)"
-              : "0 0 60px rgba(185,139,250,0.22), inset 0 0 30px rgba(185,139,250,0.12)",
+              ? "0 0 80px rgba(116,187,126,0.45), inset 0 0 40px rgba(116,187,126,0.25)"
+              : "0 0 60px rgba(116,187,126,0.22), inset 0 0 30px rgba(116,187,126,0.12)",
             cursor: "pointer",
           }}
         >
@@ -319,27 +320,27 @@ function SystemFlow({
         .sf-stage{position:relative;height:520px;width:100%;max-width:480px;margin:0 auto;}
         .sf-lines{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;}
         .sf-line{fill:none;stroke:url(#sf-line-grad);stroke-width:1;transition:opacity .35s ease;}
-        .sf-packet{filter:drop-shadow(0 0 4px rgba(185,139,250,0.85));}
+        .sf-packet{filter:drop-shadow(0 0 4px rgba(116,187,126,0.85));}
         .sf-cols{position:absolute;inset:0;display:flex;justify-content:space-between;pointer-events:none;z-index:3;}
         .sf-col{display:flex;flex-direction:column;justify-content:space-between;height:100%;width:min(210px,34vw);pointer-events:auto;}
-        .sf-node{background:#111318;border:1px solid #22262e;border-radius:10px;padding:11px 13px;display:flex;align-items:center;gap:10px;width:100%;cursor:pointer;will-change:transform;transition:border-color .25s ease, box-shadow .25s ease;}
-        .sf-chip{width:32px;height:32px;flex:none;border-radius:8px;display:flex;align-items:center;justify-content:center;background:rgba(185,139,250,0.12);}
-        .sf-tt b{display:block;font-size:11px;font-weight:600;letter-spacing:.5px;color:#eef0f3;line-height:1.3;margin-bottom:1px;}
-        .sf-tt span{display:block;font-size:10.5px;color:#9aa3af;line-height:1.3;}
+        .sf-node{background:#141812;border:1px solid #262b22;border-radius:10px;padding:11px 13px;display:flex;align-items:center;gap:10px;width:100%;cursor:pointer;will-change:transform;transition:border-color .25s ease, box-shadow .25s ease;}
+        .sf-chip{width:32px;height:32px;flex:none;border-radius:8px;display:flex;align-items:center;justify-content:center;background:rgba(116,187,126,0.12);}
+        .sf-tt b{display:block;font-size:11px;font-weight:600;letter-spacing:.5px;color:#f1eee3;line-height:1.3;margin-bottom:1px;}
+        .sf-tt span{display:block;font-size:10.5px;color:#a7ab98;line-height:1.3;}
         .sf-core-wrap{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:190px;height:190px;z-index:1;pointer-events:none;}
         .sf-rings-wrap{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:190px;height:190px;z-index:4;pointer-events:none;}
         .sf-ring{position:absolute;border-radius:50%;}
-        .sf-r1{inset:0;border:1px solid rgba(185,139,250,.35);animation:pf-spin 14s linear infinite;}
-        .sf-r2{inset:-28px;border:1px solid rgba(108,155,255,.18);animation:pf-spin 26s linear infinite reverse;}
-        .sf-r3{inset:-56px;border:1px dashed rgba(185,139,250,.12);animation:pf-spin 44s linear infinite;}
-        .sf-orbit-dot{position:absolute;top:-3px;left:50%;width:6px;height:6px;margin-left:-3px;border-radius:50%;background:#b98bfa;box-shadow:0 0 8px #b98bfa;display:block;}
-        .sf-core-circle{position:absolute;inset:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 30% 30%, rgba(185,139,250,.25), rgba(8,9,12,.95));border:1px solid rgba(185,139,250,.4);box-shadow:0 0 60px rgba(185,139,250,.22), inset 0 0 30px rgba(185,139,250,.12);pointer-events:auto;transition:border-color .25s ease, box-shadow .25s ease;}
+        .sf-r1{inset:0;border:1px solid rgba(116,187,126,.35);animation:pf-spin 14s linear infinite;}
+        .sf-r2{inset:-28px;border:1px solid rgba(79,169,140,.18);animation:pf-spin 26s linear infinite reverse;}
+        .sf-r3{inset:-56px;border:1px dashed rgba(116,187,126,.12);animation:pf-spin 44s linear infinite;}
+        .sf-orbit-dot{position:absolute;top:-3px;left:50%;width:6px;height:6px;margin-left:-3px;border-radius:50%;background:#74bb7e;box-shadow:0 0 8px #74bb7e;display:block;}
+        .sf-core-circle{position:absolute;inset:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 30% 30%, rgba(116,187,126,.25), rgba(8,9,12,.95));border:1px solid rgba(116,187,126,.4);box-shadow:0 0 60px rgba(116,187,126,.22), inset 0 0 30px rgba(116,187,126,.12);pointer-events:auto;transition:border-color .25s ease, box-shadow .25s ease;}
         @keyframes sf-wave{
           0%{transform:scale(.55);opacity:.8;}
           100%{transform:scale(3.4);opacity:0;}
         }
-        .sf-pulse{position:absolute;inset:-4px;border-radius:50%;border:2px solid rgba(185,139,250,.6);box-shadow:0 0 18px rgba(185,139,250,.35), inset 0 0 10px rgba(185,139,250,.2);animation:sf-wave 1.5s cubic-bezier(.16,1,.3,1) forwards;display:block;pointer-events:none;}
-        .sf-core-aura{position:absolute;inset:-4px;border-radius:50%;border:1px solid rgba(185,139,250,.35);animation:pf-ping 2.4s cubic-bezier(.16,1,.3,1) infinite;display:block;}
+        .sf-pulse{position:absolute;inset:-4px;border-radius:50%;border:2px solid rgba(116,187,126,.6);box-shadow:0 0 18px rgba(116,187,126,.35), inset 0 0 10px rgba(116,187,126,.2);animation:sf-wave 1.5s cubic-bezier(.16,1,.3,1) forwards;display:block;pointer-events:none;}
+        .sf-core-aura{position:absolute;inset:-4px;border-radius:50%;border:1px solid rgba(116,187,126,.35);animation:pf-ping 2.4s cubic-bezier(.16,1,.3,1) infinite;display:block;}
         @media(max-width:1000px){.sf-stage{height:500px;max-width:460px;}}
         @media(max-width:600px){
           .sf-stage{height:420px;}
@@ -382,7 +383,11 @@ export function Hero() {
         zIndex: 1,
       }}
     >
-      {/* Background video — dimmed and scrimmed so the hero copy stays readable */}
+      {/* Background photo — the "Living Digital Systems" hero image: a
+          server room reclaimed by greenery. The demo video plays as a
+          faint moving texture layered on top (lighten blend, low opacity)
+          so it adds motion without competing with the photo. */}
+      <SectionPhoto src="/assets/server.jpg" opacity={0.4} />
       <video
         autoPlay
         loop
@@ -395,7 +400,8 @@ export function Hero() {
           height: "100%",
           objectFit: "cover",
           zIndex: 0,
-          opacity: 0.3,
+          opacity: 0.12,
+          mixBlendMode: "lighten",
         }}
       >
         <source src="/assets/apirun.mp4" type="video/mp4" />
@@ -405,7 +411,7 @@ export function Hero() {
           position: "absolute",
           inset: 0,
           zIndex: 1,
-          background: `linear-gradient(180deg, ${T.bg}b3 0%, ${T.bg}d9 45%, ${T.bg} 100%)`,
+          background: `linear-gradient(180deg, ${T.bg}8f 0%, ${T.bg}c2 45%, ${T.bg} 100%)`,
         }}
       />
 

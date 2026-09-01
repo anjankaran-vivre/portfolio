@@ -6,6 +6,7 @@ import { T } from "@/lib/theme";
 import { PROCESS } from "@/data/process";
 import { Eyebrow } from "@/components/shared/Eyebrow";
 import { Reveal } from "@/components/shared/Reveal";
+import { SectionPhoto } from "@/components/shared/SectionPhoto";
 
 export function Process() {
   const ref = useRef<HTMLDivElement>(null);
@@ -15,7 +16,8 @@ export function Process() {
 
   return (
     <section id="about" ref={ref} style={{ background: T.bg2, borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, position: "relative", zIndex: 1 }}>
-      <div style={{ maxWidth: 1240, margin: "0 auto", padding: "56px 24px 120px" }}>
+      <SectionPhoto src="/assets/tree-neuron.jpg" opacity={0.12} />
+      <div style={{ maxWidth: 1240, margin: "0 auto", padding: "56px 24px 120px", position: "relative", zIndex: 1 }}>
         <Reveal>
           <Eyebrow color={T.amber}>How We Build</Eyebrow>
           <h2 className="pf-disp" style={{ fontSize: "clamp(28px,4.5vw,46px)", fontWeight: 600, maxWidth: 760, letterSpacing: "-0.02em", margin: 0 }}>

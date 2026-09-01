@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { T } from "@/lib/theme";
 import { TEAM, type TeamMember } from "@/data/team";
 import { SectionWrap } from "@/components/shared/SectionWrap";
+import { SectionPhoto } from "@/components/shared/SectionPhoto";
 import { Eyebrow } from "@/components/shared/Eyebrow";
 import { Reveal } from "@/components/shared/Reveal";
 import {
@@ -70,7 +71,7 @@ function SkillChip({
         gap: 8,
         padding: "7px 11px",
         borderRadius: 8,
-        background: "#0c0e12",
+        background: "#0e110d",
         border: `1px solid ${T.border}`,
         zIndex: 10,
         opacity,
@@ -333,6 +334,7 @@ export function Team() {
 
   return (
     <SectionWrap id="team" style={{ paddingTop: 56 }}>
+      <SectionPhoto src="/assets/treebelow.jpg" opacity={0.08} />
       {/* Tall outer wrapper gives room to scroll smoothly through the animation */}
       <div ref={sectionRef} style={{ position: "relative", minHeight: "220vh" }}>
         

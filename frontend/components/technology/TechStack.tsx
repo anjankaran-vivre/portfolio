@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { T } from "@/lib/theme";
 import { STACK } from "@/data/technologies";
 import { SectionWrap } from "@/components/shared/SectionWrap";
+import { SectionPhoto } from "@/components/shared/SectionPhoto";
 import { Eyebrow } from "@/components/shared/Eyebrow";
 import { Reveal } from "@/components/shared/Reveal";
 
@@ -16,6 +17,7 @@ export function TechStack() {
 
   return (
     <SectionWrap id="stack">
+      <SectionPhoto src="/assets/chips.jpg" opacity={0.1} />
       <Reveal>
         <Eyebrow color={T.violet}>Technology</Eyebrow>
         <h2 className="pf-disp" style={{ fontSize: "clamp(28px,4.5vw,46px)", fontWeight: 600, maxWidth: 760, letterSpacing: "-0.02em", margin: 0 }}>

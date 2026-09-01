@@ -13,7 +13,7 @@ export const CAPABILITIES: Capability[] = [
   {
     id: "fullstack",
     title: "Full-Stack Development",
-    color: "#6c9bff",
+    color: "#4fa98c",
     icon: "layers",
     desc: "Complete digital products from interface to infrastructure.",
     flow: ["UI", "APPLICATION", "API", "BACKEND", "DATABASE", "DEPLOY"],
@@ -23,7 +23,7 @@ export const CAPABILITIES: Capability[] = [
   {
     id: "aiml",
     title: "AI / ML",
-    color: "#b98bfa",
+    color: "#74bb7e",
     icon: "cpu",
     desc: "Machine learning, generative AI and LLM applications.",
     flow: ["DATA", "FEATURES", "MODEL", "LLM", "INFERENCE", "PRODUCT"],
@@ -33,7 +33,7 @@ export const CAPABILITIES: Capability[] = [
   {
     id: "agents",
     title: "AI Agents",
-    color: "#b98bfa",
+    color: "#74bb7e",
     icon: "bot",
     desc: "Agents that reason, access knowledge, use tools and act.",
     flow: ["USER", "AGENT", "KNOWLEDGE", "TOOLS", "APIS", "ACTION"],
@@ -43,7 +43,7 @@ export const CAPABILITIES: Capability[] = [
   {
     id: "agentic",
     title: "Agentic Workflows",
-    color: "#b98bfa",
+    color: "#74bb7e",
     icon: "workflow",
     desc: "Multi-step intelligent workflows combining AI, APIs and logic.",
     flow: ["TRIGGER", "AGENT", "DECISION", "TOOL", "ACTION", "COMPLETE"],
@@ -51,19 +51,9 @@ export const CAPABILITIES: Capability[] = [
     tags: ["Orchestration", "Decision Logic", "APIs", "Multi-Agent"],
   },
   {
-    id: "automation",
-    title: "Automation",
-    color: "#f2b860",
-    icon: "zap",
-    desc: "Business process automation and workflow orchestration.",
-    flow: ["EVENT", "RULE", "WORKFLOW", "INTEGRATION", "ACTION", "RESULT"],
-    detail: "Manual work turned into automated, triggered digital workflows.",
-    tags: ["Workflow Engines", "Webhooks", "Scheduling", "Orchestration"],
-  },
-  {
     id: "whatsapp",
     title: "WhatsApp Automation",
-    color: "#f2b860",
+    color: "#e3b462",
     icon: "message",
     desc: "WhatsApp + AI + CRM + APIs + database + human handoff.",
     flow: ["CUSTOMER", "WHATSAPP", "AI", "BUSINESS LOGIC", "CRM", "HUMAN HANDOFF"],
@@ -73,7 +63,7 @@ export const CAPABILITIES: Capability[] = [
   {
     id: "integration",
     title: "API & System Integration",
-    color: "#6c9bff",
+    color: "#4fa98c",
     icon: "server",
     desc: "Connect apps, services, databases, CRMs and platforms.",
     flow: ["SOURCE", "ADAPTER", "API", "MAP", "TARGET", "SYNC"],

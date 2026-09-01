@@ -1,17 +1,17 @@
 :root {
-  --bg: #08090c;
-  --bg2: #0c0e12;
-  --surface: #111318;
-  --surface2: #171a20;
-  --border: #22262e;
-  --border-lit: #323844;
-  --text: #eef0f3;
-  --dim: #9aa3af;
-  --faint: #575f6c;
-  --blue: #6c9bff;
-  --violet: #b98bfa;
-  --amber: #f2b860;
-  --amber-dim: #7a6438;
+  --bg: #0a0c09;
+  --bg2: #0e110d;
+  --surface: #141812;
+  --surface2: #1b2018;
+  --border: #262b22;
+  --border-lit: #38402f;
+  --text: #f1eee3;
+  --dim: #a7ab98;
+  --faint: #838a76;
+  --blue: #4fa98c;
+  --violet: #74bb7e;
+  --amber: #e3b462;
+  --amber-dim: #6b5730;
 }
 
 * {
@@ -60,15 +60,18 @@ body {
   letter-spacing: 0.03em;
 }
 
-/* Global grid backdrop */
+/* Global grid backdrop — precise technical grid softened by an organic,
+   dappled-light glow (forest canopy meets circuit board). */
 .pf-grid-backdrop {
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 0;
-  background-image: linear-gradient(rgba(34, 38, 46, 0.14) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(34, 38, 46, 0.14) 1px, transparent 1px);
-  background-size: 64px 64px;
+  background-image: radial-gradient(ellipse 60% 40% at 20% 10%, rgba(116, 187, 126, 0.05), transparent 60%),
+    radial-gradient(ellipse 50% 35% at 85% 30%, rgba(79, 169, 140, 0.04), transparent 60%),
+    linear-gradient(rgba(38, 43, 34, 0.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(38, 43, 34, 0.16) 1px, transparent 1px);
+  background-size: auto, auto, 64px 64px, 64px 64px;
   mask-image: radial-gradient(circle at 50% 0%, black, transparent 78%);
   -webkit-mask-image: radial-gradient(circle at 50% 0%, black, transparent 78%);
 }

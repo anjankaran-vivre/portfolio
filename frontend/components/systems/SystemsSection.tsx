@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { motion, LayoutGroup, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 import { T } from "@/lib/theme";
 import { CAPABILITIES, type Capability } from "@/data/capabilities";
 import { SectionWrap } from "@/components/shared/SectionWrap";
@@ -10,8 +9,12 @@ import { FlowReveal } from "@/components/shared/FlowReveal";
 import { Eyebrow } from "@/components/shared/Eyebrow";
 import { Tag } from "@/components/shared/Tag";
 import { Icon } from "@/components/shared/Icon";
+import { ResilienceDemo } from "@/components/systems/ResilienceDemo";
 
-const EASE = [0.16, 1, 0.3, 1] as const;
+// Capability whose card is swapped out for its own "problem" animation
+// instead of the standard flow-chain card. Each capability gets one of
+// these over time — this is the first.
+const PROBLEM_DEMO_IDS = new Set(["agents"]);
 
 // One capability card — always fully open: icon, title, detail, the
 // original vertical flow chain (connecting line + traveling pulse) and
@@ -120,94 +123,23 @@ function CapabilityCard({ cap }: { cap: Capability }) {
   );
 }
 
-// Small fixed-offset peek stack — identical language to the Live Work
-// window stack: front card full size, up to two more peeking behind it.
-const STACK_OFFSETS = [
-  { x: 0, y: 0, scale: 1, opacity: 1, rotate: 0 },
-  { x: -16, y: 16, scale: 0.96, opacity: 0.7, rotate: -2.5 },
-  { x: -28, y: 28, scale: 0.93, opacity: 0.42, rotate: 2.5 },
-];
-const MAX_VISIBLE_DEPTH = STACK_OFFSETS.length - 1;
-const GRID_COLS = 4;
-
 function CapabilityMap() {
-  // The container's own height swings from ~600px (stacked) to 1200px+
-  // (grid). A *percentage* threshold (amount: 0.35) against that resizing
-  // box caused a feedback loop: unstack → taller → the visible fraction
-  // drops back under 35% → re-stacks → shorter → triggers again — the
-  // flicker. Using "any overlap at all" (no amount/margin) instead means
-  // it only flips once the whole section is genuinely off-screen in either
-  // direction, so it stays unstacked the entire time you're scrolling
-  // through reading the grid.
-  const sectionRef = useRef<HTMLDivElement>(null);
-  // No `once` — leaving the section (either direction) collapses it back
-  // into a stack, so scrolling back in replays the reveal.
-  const inView = useInView(sectionRef);
-  const [unstacked, setUnstacked] = useState(false);
-
-  useEffect(() => {
-    if (inView) {
-      const t = setTimeout(() => setUnstacked(true), 650);
-      return () => clearTimeout(t);
-    }
-    setUnstacked(false);
-  }, [inView]);
-
   return (
-    <div ref={sectionRef} style={{ position: "relative" }}>
-      <LayoutGroup>
-        <div
-          className={unstacked ? "pf-cap-grid" : undefined}
-          style={
-            unstacked
-              ? { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 16 }
-              : { position: "relative", height: 600, maxWidth: 300, margin: "0 auto" }
-          }
-        >
-          {CAPABILITIES.map((c, idx) => {
-            const col = idx % GRID_COLS;
-            const row = Math.floor(idx / GRID_COLS);
-            const depth = Math.min(idx, MAX_VISIBLE_DEPTH);
-            const hiddenInStack = idx > MAX_VISIBLE_DEPTH;
-            const o = STACK_OFFSETS[depth];
-
-            const delay = unstacked ? row * 0.15 + col * 0.06 : 0;
-
-            return (
-              // Outer element owns the actual DOM position (absolute peek
-              // stack vs. grid cell) and only `layout` — Framer's FLIP
-              // system — animates that move. The inner element separately
-              // animates the small peek offset (its own x/y/scale/rotate).
-              // Driving both on the SAME element caused the transform to
-              // fight itself and flicker/jitter mid-transition.
-              <motion.div
-                key={c.id}
-                layout
-                transition={{ layout: { duration: 0.9, delay, ease: EASE } }}
-                style={
-                  unstacked
-                    ? { height: "100%" }
-                    : { position: "absolute", top: 0, left: 0, width: "100%", zIndex: CAPABILITIES.length - idx }
-                }
-              >
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={
-                    unstacked
-                      ? { opacity: 1, x: 0, y: 0, scale: 1, rotate: 0 }
-                      : { opacity: hiddenInStack ? 0 : o.opacity, x: o.x, y: o.y, scale: o.scale, rotate: o.rotate }
-                  }
-                  transition={{ duration: 0.6, delay, ease: EASE }}
-                  style={{ height: "100%" }}
-                >
-                  <CapabilityCard cap={c} />
-                </motion.div>
-              </motion.div>
-            );
-          })}
-        </div>
-      </LayoutGroup>
-    </div>
+    <>
+      <div className="pf-cap-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
+        {CAPABILITIES.map((c) =>
+          PROBLEM_DEMO_IDS.has(c.id) ? <ResilienceDemo key={c.id} /> : <CapabilityCard key={c.id} cap={c} />
+        )}
+      </div>
+      <style>{`
+        @media (max-width: 900px) {
+          .pf-cap-grid { grid-template-columns: repeat(2, 1fr) !important; }
+        }
+        @media (max-width: 600px) {
+          .pf-cap-grid { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
+    </>
   );
 }
 

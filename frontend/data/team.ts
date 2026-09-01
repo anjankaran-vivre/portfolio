@@ -15,7 +15,7 @@ export const TEAM: TeamMember[] = [
     id: "pritam",
     name: "Pritam Routh",
     role: "AI / ML ENGINEER · FULL-STACK & AGENTIC SYSTEMS",
-    color: "#b98bfa",
+    color: "#74bb7e",
     initials: "PR",
     bio: "Builds intelligent systems that combine AI/ML, generative AI and agentic architecture — models that reason, agents that call tools, workflows that act. Backend, APIs and system architecture are part of the same build.",
     strengths: [
@@ -39,7 +39,7 @@ export const TEAM: TeamMember[] = [
     id: "anjan",
     name: "Anjan Karan",
     role: "FULL-STACK ENGINEER · PRODUCT & AUTOMATION SYSTEMS",
-    color: "#6c9bff",
+    color: "#4fa98c",
     initials: "AK",
     bio: "Engineers complete digital products from interface to infrastructure — frontend experiences, backend architecture, databases, APIs, integrations and automation. Turns business needs into production systems.",
     strengths: [
@@ -63,7 +63,7 @@ export const TEAM: TeamMember[] = [
     id: "manish",
     name: "Manish Das",
     role: "INFRASTRUCTURE & PLATFORM",
-    color: "#38bdf8",
+    color: "#e3b462",
     initials: "MD",
     bio: "Focusing on distributed systems, reliability engineering, and core infrastructure scaling.",
     strengths: [

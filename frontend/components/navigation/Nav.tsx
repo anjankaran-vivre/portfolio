@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useSpring, useTransform, useMotionTemplate } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { T } from "@/lib/theme";
 import { NAV_ITEMS, STATUS_LINES } from "@/data/site";
@@ -19,8 +19,8 @@ export function STACKLOOPLogo({ size = 20, style }: { size?: number; style?: Rea
     >
       <defs>
         <linearGradient id="v-logo-grad" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#b98bfa" />
-          <stop offset="100%" stopColor="#6c9bff" />
+          <stop offset="0%" stopColor="#74bb7e" />
+          <stop offset="100%" stopColor="#4fa98c" />
         </linearGradient>
       </defs>
       <text
@@ -55,16 +55,26 @@ const SECTION_TABS: ReadonlyArray<{ id: string; tab: string }> = [
 ];
 
 export function Nav() {
-  const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState<string>("hero");
   const { openId, setOpenId } = useCaseStudy();
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  // Flush, invisible bar over the hero that shrinks into a small floating
+  // glass "pill" as the page scrolls — noticeably shorter and narrower than
+  // the full-width bar, inset from the edges, with a soft shadow.
+  const { scrollY } = useScroll();
+  const scrollSmooth = useSpring(scrollY, { stiffness: 300, damping: 40, mass: 0.4 });
+  const navT = useTransform(scrollSmooth, [0, 160], [0, 1]);
+  const navBg = useMotionTemplate`rgba(10, 12, 9, ${useTransform(navT, [0, 1], [0, 0.86])})`;
+  const navBorder = useMotionTemplate`rgba(38, 43, 34, ${navT})`;
+  const navBlur = useMotionTemplate`blur(${useTransform(navT, [0, 1], [0, 14])}px)`;
+  const navPaddingY = useTransform(navT, [0, 1], [20, 7]);
+  const navPadding = useMotionTemplate`${navPaddingY}px 24px`;
+  const navOuterTop = useTransform(navT, [0, 1], [0, 12]);
+  const navOuterSide = useTransform(navT, [0, 1], [0, 24]);
+  const navRadius = useTransform(navT, [0, 1], [0, 999]);
+  const navShadow = useMotionTemplate`0 16px 36px -12px rgba(0, 0, 0, ${useTransform(navT, [0, 1], [0, 0.55])})`;
+  const navMaxWidth = useTransform(navT, [0, 1], [1276, 1040]);
 
   // Scroll-spy: highlight the nav tab of whichever section crosses the
   // active zone (~35% viewport height) while scrolling.
@@ -111,29 +121,44 @@ export function Nav() {
   };
 
   return (
-    <div
+    <motion.div
       style={{
         position: "fixed",
         top: 0,
         left: 0,
         right: 0,
         zIndex: 50,
-        borderBottom: `1px solid ${scrolled ? T.border : "transparent"}`,
-        background: scrolled ? `${T.bg}ee` : "transparent",
-        backdropFilter: scrolled ? "blur(12px)" : "none",
-        WebkitBackdropFilter: scrolled ? "blur(12px)" : "none",
-        transition: "all .3s ease",
+        display: "flex",
+        justifyContent: "center",
+        pointerEvents: "none",
+        paddingTop: navOuterTop,
+        paddingLeft: navOuterSide,
+        paddingRight: navOuterSide,
       }}
     >
-      <div
+    <motion.div
+      style={{
+        width: "100%",
+        maxWidth: navMaxWidth,
+        pointerEvents: "auto",
+        overflow: "hidden",
+        border: "1px solid transparent",
+        borderColor: navBorder,
+        borderRadius: navRadius,
+        background: navBg,
+        backdropFilter: navBlur,
+        WebkitBackdropFilter: navBlur,
+        boxShadow: navShadow,
+      }}
+    >
+      <motion.div
         style={{
           maxWidth: 1240,
           margin: "0 auto",
-          padding: scrolled ? "12px 24px" : "22px 24px",
+          padding: navPadding,
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          transition: "padding .3s ease",
           gap: 16,
         }}
       >
@@ -252,7 +277,7 @@ export function Nav() {
         >
           <span className="pf-mono" style={{ fontSize: 11 }}>{open ? "CLOSE" : "MENU"}</span>
         </button>
-      </div>
+      </motion.div>
 
       <AnimatePresence>
         {open && (
@@ -318,6 +343,7 @@ export function Nav() {
           .pf-nav-mobile { display: inline-flex; }
         }
       `}</style>
-    </div>
+    </motion.div>
+    </motion.div>
   );
 }
