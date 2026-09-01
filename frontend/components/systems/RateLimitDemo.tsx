@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Play, Pause } from "lucide-react";
 import { T } from "@/lib/theme";
 import { Icon } from "@/components/shared/Icon";
+import { setWrappedSvgText } from "@/lib/wrapSvgText";
 
 const BAD = "#c9584f";
 
@@ -77,10 +78,21 @@ const STAGES: Stage[] = [
   },
 ];
 
-const CLIENT_EXIT = { x: 150, y: 140 };
-const GATE = { x: 400, y: 140 };
-const SERVER_ENTRY = { x: 650, y: 140 };
+// Vertical flow — client on top, the limiter gate beneath it, the server
+// at the bottom, with the same viewBox and stop positions as the Load
+// Balancing card's diagram (620×580, server row at y=440) so the two sit
+// at matching scale and the server boxes land in the same row of the page
+// when the cards are side by side in the grid.
+const CLIENT_EXIT = { x: 310, y: 86 };
+const GATE = { x: 310, y: 220 };
+const SERVER_ENTRY = { x: 310, y: 440 };
+// A horizontal row of slots — offset to the right of the vertical flow
+// line so the gauge doesn't sit on top of it.
 const METER_SLOTS = 5;
+const METER_SLOT_W = 22;
+const METER_GAP = 5;
+const METER_X = GATE.x + 60;
+const METER_Y = 352;
 
 export function RateLimitDemo() {
   const packetsLayerRef = useRef<SVGGElement>(null);
@@ -121,7 +133,7 @@ export function RateLimitDemo() {
         serverBoxRef.current.style.stroke = STATE_COLOR[state];
         serverBoxRef.current.style.fill = `${STATE_COLOR[state]}1c`;
       }
-      if (serverLabelRef.current) serverLabelRef.current.textContent = STATE_LOAD[state];
+      setWrappedSvgText(serverLabelRef.current, STATE_LOAD[state], SERVER_ENTRY.x, 20, 14);
     }
 
     function setMeter(filled: number) {
@@ -300,17 +312,17 @@ export function RateLimitDemo() {
           type="button"
           className="pf-btn"
           onClick={() => setPlaying((p) => !p)}
-          style={{ padding: "8px 14px", fontSize: 10.5, flexShrink: 0 }}
+          style={{ padding: "8px 14px", fontSize: 10.5, flexShrink: 0, width: 88, justifyContent: "center" }}
         >
           {playing ? <Pause size={12} /> : <Play size={12} />} {playing ? "Pause" : "Play"}
         </button>
       </div>
 
       <svg
-        viewBox="0 0 900 300"
+        viewBox="0 0 620 580"
         role="img"
         aria-label="Diagram of login requests passing from a client through an optional rate limiter to a server, showing what happens with and without limiting."
-        style={{ display: "block", width: "100%", height: "auto", color: T.dim, marginTop: 18 }}
+        style={{ display: "block", width: "100%", height: "auto", color: T.dim, marginTop: 18, maxWidth: 420, marginLeft: "auto", marginRight: "auto" }}
       >
         <defs>
           <marker id="rl-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
@@ -319,24 +331,24 @@ export function RateLimitDemo() {
         </defs>
 
         <g fontFamily="var(--font-mono), IBM Plex Mono, monospace" fontSize="12" fontWeight={600}>
-          <rect x={40} y={110} width={110} height={60} rx={10} fill="none" stroke="currentColor" strokeWidth={1.6} />
-          <text x={95} y={145} textAnchor="middle" fill={T.text}>CLIENT</text>
+          <rect x={CLIENT_EXIT.x - 65} y={20} width={130} height={66} rx={10} fill="none" stroke="currentColor" strokeWidth={1.6} />
+          <text x={CLIENT_EXIT.x} y={58} textAnchor="middle" fontSize={13} fill={T.text}>CLIENT</text>
 
           <line x1={CLIENT_EXIT.x} y1={CLIENT_EXIT.y} x2={SERVER_ENTRY.x} y2={SERVER_ENTRY.y} stroke="currentColor" strokeWidth={1.6} opacity={0.5} markerEnd="url(#rl-arrow)" />
 
           <g ref={gateGroupRef} style={{ transition: "opacity 400ms ease" }}>
-            <polygon points={`${GATE.x - 55},${GATE.y} ${GATE.x},${GATE.y - 35} ${GATE.x + 55},${GATE.y} ${GATE.x},${GATE.y + 35}`} fill={T.bg2} stroke={T.amber} strokeWidth={1.6} />
-            <text x={GATE.x} y={GATE.y + 4} textAnchor="middle" fill={T.amber}>RL</text>
-            <text ref={gateLabelRef} x={GATE.x} y={GATE.y - 48} textAnchor="middle" fontSize="10" fontWeight={500} fill={T.amber} letterSpacing="0.04em" />
+            <polygon points={`${GATE.x - 70},${GATE.y} ${GATE.x},${GATE.y - 45} ${GATE.x + 70},${GATE.y} ${GATE.x},${GATE.y + 45}`} fill={T.bg2} stroke={T.amber} strokeWidth={1.6} />
+            <text x={GATE.x} y={GATE.y + 5} textAnchor="middle" fontSize={14} fill={T.amber}>RL</text>
+            <text ref={gateLabelRef} x={GATE.x} y={GATE.y - 58} textAnchor="middle" fontSize="10" fontWeight={500} fill={T.amber} letterSpacing="0.04em" />
             <g>
               {Array.from({ length: METER_SLOTS }).map((_, i) => (
                 <rect
                   key={i}
                   ref={(el) => { meterRefs.current[i] = el; }}
-                  x={GATE.x - 45 + i * 20}
-                  y={GATE.y + 46}
-                  width={14}
-                  height={9}
+                  x={METER_X + i * (METER_SLOT_W + METER_GAP)}
+                  y={METER_Y}
+                  width={METER_SLOT_W}
+                  height={16}
                   rx={2}
                   fill={T.surface2}
                 />
@@ -344,9 +356,9 @@ export function RateLimitDemo() {
             </g>
           </g>
 
-          <rect ref={serverBoxRef} x={650} y={94} width={200} height={92} rx={12} fill="none" stroke="currentColor" strokeWidth={2} />
-          <text x={670} y={128} fill={T.text}>SERVER</text>
-          <text ref={serverLabelRef} x={670} y={154} fontWeight={500} fill="currentColor" opacity={0.7}>load: nominal</text>
+          <rect ref={serverBoxRef} x={SERVER_ENTRY.x - 130} y={SERVER_ENTRY.y} width={260} height={110} rx={12} fill="none" stroke="currentColor" strokeWidth={2} />
+          <text x={SERVER_ENTRY.x} y={SERVER_ENTRY.y + 38} textAnchor="middle" fontSize={13.5} fill={T.text}>SERVER</text>
+          <text ref={serverLabelRef} x={SERVER_ENTRY.x} y={SERVER_ENTRY.y + 62} textAnchor="middle" fontSize={11} fontWeight={500} fill="currentColor" opacity={0.7}>load: nominal</text>
         </g>
 
         <g ref={packetsLayerRef} />
@@ -390,15 +402,15 @@ export function RateLimitDemo() {
         {stage.caption}
       </p>
 
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "10px 18px", margin: "18px 2px 0", fontSize: 12, color: T.dim }}>
-        <span className="pf-mono" style={{ display: "inline-flex", alignItems: "center", gap: 7 }}>
-          <span style={{ width: 8, height: 8, borderRadius: "50%", background: T.blue, display: "inline-block" }} /> Allowed
+      <div style={{ display: "flex", gap: 10, margin: "18px 2px 0", fontSize: 10, color: T.dim, overflowX: "auto", whiteSpace: "nowrap" }}>
+        <span className="pf-mono" style={{ display: "inline-flex", alignItems: "center", gap: 4, flexShrink: 0 }}>
+          <span style={{ width: 6, height: 6, borderRadius: "50%", background: T.blue, display: "inline-block", flexShrink: 0 }} /> Allowed
         </span>
-        <span className="pf-mono" style={{ display: "inline-flex", alignItems: "center", gap: 7 }}>
-          <span style={{ width: 8, height: 8, borderRadius: "50%", background: BAD, display: "inline-block" }} /> Blocked / 429
+        <span className="pf-mono" style={{ display: "inline-flex", alignItems: "center", gap: 4, flexShrink: 0 }}>
+          <span style={{ width: 6, height: 6, borderRadius: "50%", background: BAD, display: "inline-block", flexShrink: 0 }} /> Blocked / 429
         </span>
-        <span className="pf-mono" style={{ display: "inline-flex", alignItems: "center", gap: 7 }}>
-          <span style={{ width: 8, height: 8, borderRadius: "50%", background: T.amber, display: "inline-block" }} /> Overwhelmed
+        <span className="pf-mono" style={{ display: "inline-flex", alignItems: "center", gap: 4, flexShrink: 0 }}>
+          <span style={{ width: 6, height: 6, borderRadius: "50%", background: T.amber, display: "inline-block", flexShrink: 0 }} /> Overwhelmed
         </span>
       </div>
 

@@ -73,7 +73,7 @@ export function Nav() {
   const navPadding = useMotionTemplate`${navPaddingY}px 24px`;
   const navOuterTop = useTransform(navT, [0, 1], [0, 12]);
   const navOuterSide = useTransform(navT, [0, 1], [0, 24]);
-  const navRadius = useTransform(navT, [0, 1], [0, 999]);
+  const navRadius = useTransform(navT, [0, 1], [0, 16]);
   const navShadow = useMotionTemplate`0 16px 36px -12px rgba(0, 0, 0, ${useTransform(navT, [0, 1], [0, 0.55])})`;
   const navMaxWidth = useTransform(navT, [0, 1], [1276, 1040]);
 

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Play, Pause } from "lucide-react";
 import { T } from "@/lib/theme";
 import { Icon } from "@/components/shared/Icon";
+import { setWrappedSvgText } from "@/lib/wrapSvgText";
 
 // Down/failed state has no equivalent in the shared palette (every other
 // token is a "good news" color) — defined locally, kept close in warmth to
@@ -105,27 +106,32 @@ const STAGES: Stage[] = [
   },
 ];
 
-// Bigger, more legible server boxes than the first pass — width/height and
-// vertical rhythm recomputed together so the three boxes still clear each
-// other with a comfortable gap.
-const BOX_W = 200;
-const BOX_H = 92;
-const BOX_X = 640;
-const BOX_TOP = [66, 184, 302]; // n=0,1,2
-const BOX_CENTER_Y = BOX_TOP.map((t) => t + BOX_H / 2); // [112, 230, 348]
-const DOT_CX = BOX_X + BOX_W - 18;
+// Vertical flow — client on top, load balancer beneath it, the three
+// servers in a row at the bottom, with a taller gap between each stop so
+// the connecting lines read as an actual journey, not a short hop.
+const BOX_W = 170;
+const BOX_H = 110;
+const BOX_TOP = 440;
+const BOX_X = [30, 225, 420]; // n=0,1,2
+const BOX_CENTER_X = BOX_X.map((x) => x + BOX_W / 2); // [115, 310, 505]
+const DOT_CY = BOX_TOP + 22;
 
-const SERVER_ENTRY = BOX_CENTER_Y.map((y) => ({ x: BOX_X, y }));
-const CLIENT = { x: 150, y: 230 };
-const LB = { x: 385, y: 230 };
+const SERVER_ENTRY = BOX_CENTER_X.map((x) => ({ x, y: BOX_TOP }));
+const CLIENT = { x: 310, y: 86 };
+const LB = { x: 310, y: 220 };
+// The three fan-out lines (and the packets riding them) leave from the
+// diamond's bottom vertex, not its center — otherwise they visibly start
+// mid-air inside the shape instead of joining it cleanly at a point.
+const LB_EXIT = { x: LB.x, y: LB.y + 45 };
 
-// Before the load balancer exists, there's exactly one server — it sits at
-// the client's own height so the connector is a single straight line, not
-// an angled stub pointing at where server 1 will eventually stack. The
-// vertical offset below slides the actual server box down to meet it.
-const SOLO_Y = CLIENT.y;
-const SOLO_ENTRY = { x: BOX_X, y: SOLO_Y };
-const SOLO_OFFSET = SOLO_Y - BOX_CENTER_Y[0];
+// Before the load balancer exists, there's exactly one server — it sits
+// directly under the client so the connector is a single straight line,
+// not an angled stub pointing at where server 1 will eventually sit in the
+// row. The horizontal offset below slides the actual server box over to
+// meet it.
+const SOLO_X = CLIENT.x;
+const SOLO_ENTRY = { x: SOLO_X, y: BOX_TOP };
+const SOLO_OFFSET = SOLO_X - BOX_CENTER_X[0];
 
 export function ResilienceDemo() {
   const svgRef = useRef<SVGSVGElement>(null);
@@ -160,8 +166,8 @@ export function ResilienceDemo() {
       if (!g) return;
       const solo = n === 0 && !lbActive ? SOLO_OFFSET : 0;
       g.style.opacity = active ? "1" : "0";
-      g.style.transform = `translate(0px, ${solo}px) scale(${active ? 1 : 0.94})`;
-      g.style.transformOrigin = `${BOX_X}px ${BOX_CENTER_Y[n]}px`;
+      g.style.transform = `translate(${solo}px, 0px) scale(${active ? 1 : 0.94})`;
+      g.style.transformOrigin = `${BOX_CENTER_X[n]}px ${BOX_TOP}px`;
       const box = g.querySelector<SVGRectElement>(".server-box");
       if (box) {
         box.style.stroke = STATE_COLOR[state];
@@ -170,7 +176,7 @@ export function ResilienceDemo() {
       const dot = g.querySelector<SVGCircleElement>(".status-dot");
       if (dot) dot.style.fill = STATE_COLOR[state];
       const label = g.querySelector<SVGTextElement>(".load-label");
-      if (label) label.textContent = active ? STATE_LOAD[state] : "not provisioned";
+      setWrappedSvgText(label, active ? STATE_LOAD[state] : "not provisioned", BOX_CENTER_X[n], 14, 12.5);
       const x = g.querySelector<SVGPathElement>(".down-x");
       if (x) x.style.opacity = state === "bad" ? "1" : "0";
       // The LB→server connector only makes sense once the load balancer
@@ -219,7 +225,7 @@ export function ResilienceDemo() {
       const healthy = stage.servers.map((s) => s !== "off" && s !== "bad");
       const i = stage.packetTargets(healthy);
       if (i === null) return;
-      const waypoints = stage.lb ? [CLIENT, LB, SERVER_ENTRY[i]] : [CLIENT, SOLO_ENTRY];
+      const waypoints = stage.lb ? [CLIENT, LB_EXIT, SERVER_ENTRY[i]] : [CLIENT, SOLO_ENTRY];
       shootPacket(waypoints, T.blue, stage.lb ? 700 : 650);
     }
 
@@ -305,7 +311,7 @@ export function ResilienceDemo() {
           type="button"
           className="pf-btn"
           onClick={() => setPlaying((p) => !p)}
-          style={{ padding: "8px 14px", fontSize: 10.5, flexShrink: 0 }}
+          style={{ padding: "8px 14px", fontSize: 10.5, flexShrink: 0, width: 88, justifyContent: "center" }}
         >
           {playing ? <Pause size={12} /> : <Play size={12} />} {playing ? "Pause" : "Play"}
         </button>
@@ -313,10 +319,10 @@ export function ResilienceDemo() {
 
       <svg
         ref={svgRef}
-        viewBox="0 0 900 460"
+        viewBox="0 0 620 580"
         role="img"
         aria-label="Diagram of a client sending requests through a load balancer to three servers, one of which fails while traffic keeps flowing to the other two."
-        style={{ display: "block", width: "100%", height: "auto", color: T.dim, marginTop: 18 }}
+        style={{ display: "block", width: "100%", height: "auto", color: T.dim, marginTop: 18, maxWidth: 420, marginLeft: "auto", marginRight: "auto" }}
       >
         <defs>
           <marker id="rd-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
@@ -325,43 +331,46 @@ export function ResilienceDemo() {
         </defs>
 
         <g fontFamily="var(--font-mono), IBM Plex Mono, monospace" fontSize="12" fontWeight={600}>
-          <rect x={40} y={200} width={110} height={60} rx={10} fill="none" stroke="currentColor" strokeWidth={1.6} />
-          <text x={95} y={235} textAnchor="middle" fill={T.text}>CLIENT</text>
+          <rect x={CLIENT.x - 65} y={20} width={130} height={66} rx={10} fill="none" stroke="currentColor" strokeWidth={1.6} />
+          <text x={CLIENT.x} y={58} textAnchor="middle" fontSize={13} fill={T.text}>CLIENT</text>
 
           {/* Before there's a load balancer, one straight line — client
-              straight to the single server, no angled stub. */}
+              straight down to the single server, no angled stub. */}
           <g id="directPath" ref={directPathRef}>
             <line x1={CLIENT.x} y1={CLIENT.y} x2={SOLO_ENTRY.x} y2={SOLO_ENTRY.y} stroke="currentColor" strokeWidth={1.6} markerEnd="url(#rd-arrow)" />
-            <text x={(CLIENT.x + SOLO_ENTRY.x) / 2} y={CLIENT.y - 14} textAnchor="middle" fontWeight={500} fill="currentColor" opacity={0.75}>request</text>
+            <text x={CLIENT.x + 46} y={(CLIENT.y + SOLO_ENTRY.y) / 2} textAnchor="middle" fontWeight={500} fill="currentColor" opacity={0.75}>request</text>
           </g>
 
           <g id="lb-group" ref={lbGroupRef}>
-            <polygon points="330,190 385,230 330,270 275,230" fill="none" stroke={T.blue} strokeWidth={1.6} />
-            <text x={330} y={234} textAnchor="middle" fill={T.blue}>LB</text>
-            <line x1={150} y1={230} x2={278} y2={230} stroke="currentColor" strokeWidth={1.6} markerEnd="url(#rd-arrow)" />
+            <polygon points={`${LB.x - 70},${LB.y} ${LB.x},${LB.y - 45} ${LB.x + 70},${LB.y} ${LB.x},${LB.y + 45}`} fill={T.bg2} stroke={T.blue} strokeWidth={1.6} />
+            <text x={LB.x} y={LB.y + 5} textAnchor="middle" fontSize={14} fill={T.blue}>LB</text>
+            <line x1={CLIENT.x} y1={CLIENT.y} x2={LB.x} y2={LB.y - 43} stroke="currentColor" strokeWidth={1.6} markerEnd="url(#rd-arrow)" />
           </g>
 
           {[0, 1, 2].map((n) => (
             <g key={n} className="server-group" ref={(el) => { serverRefs.current[n] = el; }}>
+              {/* Leaves from the diamond's bottom vertex — the same point the
+                  traveling packet uses — so the line joins the shape cleanly
+                  instead of appearing to start from mid-air inside it. */}
               <line
                 className="lb-line"
-                x1={388}
-                y1={222 + n * 8}
-                x2={BOX_X}
-                y2={BOX_CENTER_Y[n]}
+                x1={LB_EXIT.x}
+                y1={LB_EXIT.y}
+                x2={BOX_CENTER_X[n]}
+                y2={BOX_TOP}
                 stroke="currentColor"
                 strokeWidth={1.6}
                 markerEnd="url(#rd-arrow)"
               />
-              <rect className="server-box" x={BOX_X} y={BOX_TOP[n]} width={BOX_W} height={BOX_H} rx={12} fill="none" stroke="currentColor" strokeWidth={2} />
-              <text x={BOX_X + 20} y={BOX_TOP[n] + 34} fill={T.text}>SERVER {n + 1}</text>
-              <text className="load-label" x={BOX_X + 20} y={BOX_TOP[n] + 60} fontWeight={500} fill="currentColor" opacity={0.7}>
+              <rect className="server-box" x={BOX_X[n]} y={BOX_TOP} width={BOX_W} height={BOX_H} rx={12} fill="none" stroke="currentColor" strokeWidth={2} />
+              <text x={BOX_CENTER_X[n]} y={BOX_TOP + 38} textAnchor="middle" fontSize={13.5} fill={T.text}>SERVER {n + 1}</text>
+              <text className="load-label" x={BOX_CENTER_X[n]} y={BOX_TOP + 62} textAnchor="middle" fontSize={11} fontWeight={500} fill="currentColor" opacity={0.7}>
                 load: nominal
               </text>
-              <circle className="status-dot" cx={DOT_CX} cy={BOX_TOP[n] + 20} r={8} />
+              <circle className="status-dot" cx={BOX_X[n] + BOX_W - 20} cy={DOT_CY} r={8} />
               <path
                 className="down-x"
-                d={`M${DOT_CX - 5},${BOX_TOP[n] + 15} L${DOT_CX + 5},${BOX_TOP[n] + 25} M${DOT_CX + 5},${BOX_TOP[n] + 15} L${DOT_CX - 5},${BOX_TOP[n] + 25}`}
+                d={`M${BOX_X[n] + BOX_W - 25},${DOT_CY - 5} L${BOX_X[n] + BOX_W - 15},${DOT_CY + 5} M${BOX_X[n] + BOX_W - 15},${DOT_CY - 5} L${BOX_X[n] + BOX_W - 25},${DOT_CY + 5}`}
                 stroke={T.text}
                 strokeWidth={2}
                 opacity={0}
@@ -370,9 +379,9 @@ export function ResilienceDemo() {
           ))}
 
           <g id="queueGroup" ref={queueGroupRef} opacity={0}>
-            <circle className="q-dot" cx={618} cy={118} r={4} fill={T.amber} />
-            <circle className="q-dot" cx={606} cy={118} r={4} fill={T.amber} />
-            <circle className="q-dot" cx={594} cy={118} r={4} fill={T.amber} />
+            <circle className="q-dot" cx={SOLO_X - 36} cy={DOT_CY} r={4} fill={T.amber} />
+            <circle className="q-dot" cx={SOLO_X - 24} cy={DOT_CY} r={4} fill={T.amber} />
+            <circle className="q-dot" cx={SOLO_X - 12} cy={DOT_CY} r={4} fill={T.amber} />
           </g>
         </g>
 
@@ -419,18 +428,18 @@ export function ResilienceDemo() {
         {stage.caption}
       </p>
 
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "10px 18px", margin: "18px 2px 0", fontSize: 12, color: T.dim }}>
-        <span className="pf-mono" style={{ display: "inline-flex", alignItems: "center", gap: 7 }}>
-          <span style={{ width: 8, height: 8, borderRadius: "50%", background: T.violet, display: "inline-block" }} /> Healthy
+      <div className="pf-legend-row" style={{ display: "flex", gap: 10, margin: "18px 2px 0", fontSize: 10, color: T.dim, overflowX: "auto", whiteSpace: "nowrap" }}>
+        <span className="pf-mono" style={{ display: "inline-flex", alignItems: "center", gap: 4, flexShrink: 0 }}>
+          <span style={{ width: 6, height: 6, borderRadius: "50%", background: T.violet, display: "inline-block", flexShrink: 0 }} /> Healthy
         </span>
-        <span className="pf-mono" style={{ display: "inline-flex", alignItems: "center", gap: 7 }}>
-          <span style={{ width: 8, height: 8, borderRadius: "50%", background: T.amber, display: "inline-block" }} /> Overloaded
+        <span className="pf-mono" style={{ display: "inline-flex", alignItems: "center", gap: 4, flexShrink: 0 }}>
+          <span style={{ width: 6, height: 6, borderRadius: "50%", background: T.amber, display: "inline-block", flexShrink: 0 }} /> Overloaded
         </span>
-        <span className="pf-mono" style={{ display: "inline-flex", alignItems: "center", gap: 7 }}>
-          <span style={{ width: 8, height: 8, borderRadius: "50%", background: BAD, display: "inline-block" }} /> Down
+        <span className="pf-mono" style={{ display: "inline-flex", alignItems: "center", gap: 4, flexShrink: 0 }}>
+          <span style={{ width: 6, height: 6, borderRadius: "50%", background: BAD, display: "inline-block", flexShrink: 0 }} /> Down
         </span>
-        <span className="pf-mono" style={{ display: "inline-flex", alignItems: "center", gap: 7 }}>
-          <span style={{ width: 8, height: 8, borderRadius: "50%", background: T.blue, display: "inline-block" }} /> Request in flight
+        <span className="pf-mono" style={{ display: "inline-flex", alignItems: "center", gap: 4, flexShrink: 0 }}>
+          <span style={{ width: 6, height: 6, borderRadius: "50%", background: T.blue, display: "inline-block", flexShrink: 0 }} /> Request in flight
         </span>
       </div>
 
