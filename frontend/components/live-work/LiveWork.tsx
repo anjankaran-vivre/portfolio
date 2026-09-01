@@ -6,7 +6,6 @@ import { ArrowUpRight, Lock, MousePointerClick, RefreshCw } from "lucide-react";
 import { T } from "@/lib/theme";
 import { LIVE_SITES, type LiveSite } from "@/data/liveWork";
 import { SectionWrap } from "@/components/shared/SectionWrap";
-import { SectionPhoto } from "@/components/shared/SectionPhoto";
 import { Eyebrow } from "@/components/shared/Eyebrow";
 import { Reveal } from "@/components/shared/Reveal";
 
@@ -188,7 +187,6 @@ export function LiveWork() {
 
   return (
     <SectionWrap id="live-work" style={{ paddingTop: 56 }}>
-      <SectionPhoto src="/assets/deep-forest.jpg" opacity={0.12} />
       <Reveal>
         <Eyebrow color={T.blue}>Live In Production</Eyebrow>
         <h2 className="pf-disp" style={{ fontSize: "clamp(28px,4.5vw,46px)", fontWeight: 600, maxWidth: 760, letterSpacing: "-0.02em", margin: 0 }}>

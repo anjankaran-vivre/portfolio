@@ -10,11 +10,15 @@ import { Eyebrow } from "@/components/shared/Eyebrow";
 import { Tag } from "@/components/shared/Tag";
 import { Icon } from "@/components/shared/Icon";
 import { ResilienceDemo } from "@/components/systems/ResilienceDemo";
+import { RateLimitDemo } from "@/components/systems/RateLimitDemo";
 
-// Capability whose card is swapped out for its own "problem" animation
-// instead of the standard flow-chain card. Each capability gets one of
-// these over time — this is the first.
-const PROBLEM_DEMO_IDS = new Set(["agents"]);
+// Capabilities whose cards are swapped out for their own "problem"
+// animation instead of the standard flow-chain card. Each capability gets
+// one of these over time.
+const PROBLEM_DEMOS: Record<string, React.ComponentType> = {
+  agents: ResilienceDemo,
+  aiml: RateLimitDemo,
+};
 
 // One capability card — always fully open: icon, title, detail, the
 // original vertical flow chain (connecting line + traveling pulse) and
@@ -127,9 +131,10 @@ function CapabilityMap() {
   return (
     <>
       <div className="pf-cap-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
-        {CAPABILITIES.map((c) =>
-          PROBLEM_DEMO_IDS.has(c.id) ? <ResilienceDemo key={c.id} /> : <CapabilityCard key={c.id} cap={c} />
-        )}
+        {CAPABILITIES.map((c) => {
+          const Demo = PROBLEM_DEMOS[c.id];
+          return Demo ? <Demo key={c.id} /> : <CapabilityCard key={c.id} cap={c} />;
+        })}
       </div>
       <style>{`
         @media (max-width: 900px) {

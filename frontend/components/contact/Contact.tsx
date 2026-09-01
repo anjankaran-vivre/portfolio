@@ -149,12 +149,13 @@ export function Contact() {
               className="pf-disp"
               style={{ fontSize: "clamp(34px,6vw,64px)", fontWeight: 600, letterSpacing: "-0.03em", margin: 0, lineHeight: 1.05, color: T.text }}
             >
-              Have a problem
+              Ready to build
               <br />
-              worth building?
+              something real?
             </h2>
             <p style={{ color: T.dim, marginTop: 20, fontSize: 17, lineHeight: 1.6, maxWidth: 420 }}>
-              Let&apos;s build the system behind it. Tell us what you&apos;re trying to automate — we reply personally.
+              Tell us what you&apos;re trying to build or automate, and we&apos;ll design the system behind it —
+              with a personal reply, not a form letter.
             </p>
 
             <div style={{ marginTop: 36 }}>

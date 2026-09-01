@@ -4,7 +4,6 @@ import { useRef } from "react";
 import { T } from "@/lib/theme";
 import { TEAM, type TeamMember } from "@/data/team";
 import { SectionWrap } from "@/components/shared/SectionWrap";
-import { SectionPhoto } from "@/components/shared/SectionPhoto";
 import { Eyebrow } from "@/components/shared/Eyebrow";
 import { Reveal } from "@/components/shared/Reveal";
 import {
@@ -334,7 +333,6 @@ export function Team() {
 
   return (
     <SectionWrap id="team" style={{ paddingTop: 56 }}>
-      <SectionPhoto src="/assets/treebelow.jpg" opacity={0.08} />
       {/* Tall outer wrapper gives room to scroll smoothly through the animation */}
       <div ref={sectionRef} style={{ position: "relative", minHeight: "220vh" }}>
         

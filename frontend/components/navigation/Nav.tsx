@@ -7,6 +7,7 @@ import { T } from "@/lib/theme";
 import { NAV_ITEMS, STATUS_LINES } from "@/data/site";
 import { scrollToSection } from "@/lib/scroll";
 import { useCaseStudy } from "@/lib/case-study-context";
+import { Magnetic } from "@/components/shared/Magnetic";
 
 export function STACKLOOPLogo({ size = 20, style }: { size?: number; style?: React.CSSProperties }) {  return (
     <svg
@@ -230,38 +231,40 @@ export function Nav() {
           ))}
         </div>
 
-        <button
-          className="pf-mono pf-nav-desktop"
-          onClick={() => go("contact")}
-          style={{
-            background: "transparent",
-            border: `1.5px solid ${T.violet}aa`,
-            borderRadius: "4px",
-            color: T.text,
-            fontSize: 11,
-            fontWeight: 500,
-            padding: "9px 18px",
-            cursor: "pointer",
-            letterSpacing: "0.08em",
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 8,
-            transition: "all 0.25s ease",
-            boxShadow: `0 0 10px ${T.violet}15`,
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = `${T.violet}15`;
-            e.currentTarget.style.boxShadow = `0 0 15px ${T.violet}35`;
-            e.currentTarget.style.borderColor = T.violet;
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = "transparent";
-            e.currentTarget.style.boxShadow = `0 0 10px ${T.violet}15`;
-            e.currentTarget.style.borderColor = `${T.violet}aa`;
-          }}
-        >
-          START A PROJECT <ArrowRight size={12} />
-        </button>
+        <Magnetic className="pf-nav-desktop" strength={0.3}>
+          <button
+            className="pf-mono"
+            onClick={() => go("contact")}
+            style={{
+              background: "transparent",
+              border: `1.5px solid ${T.violet}aa`,
+              borderRadius: "4px",
+              color: T.text,
+              fontSize: 11,
+              fontWeight: 500,
+              padding: "9px 18px",
+              cursor: "pointer",
+              letterSpacing: "0.08em",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              transition: "all 0.25s ease",
+              boxShadow: `0 0 10px ${T.violet}15`,
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = `${T.violet}15`;
+              e.currentTarget.style.boxShadow = `0 0 15px ${T.violet}35`;
+              e.currentTarget.style.borderColor = T.violet;
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "transparent";
+              e.currentTarget.style.boxShadow = `0 0 10px ${T.violet}15`;
+              e.currentTarget.style.borderColor = `${T.violet}aa`;
+            }}
+          >
+            START A PROJECT <ArrowRight size={12} />
+          </button>
+        </Magnetic>
 
         <button
           className="pf-nav-mobile"

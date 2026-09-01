@@ -6,6 +6,7 @@ import { ArrowRight, ArrowUpRight, X, ArrowLeft, ChevronRight, Book, Search, Sta
 import { T } from "@/lib/theme";
 import { PROJECTS, type ProjectCase } from "@/data/projects";
 import { SectionWrap } from "@/components/shared/SectionWrap";
+import { SectionPhoto } from "@/components/shared/SectionPhoto";
 import { Eyebrow } from "@/components/shared/Eyebrow";
 import { Reveal } from "@/components/shared/Reveal";
 import { Tag } from "@/components/shared/Tag";
@@ -364,6 +365,7 @@ export function Projects() {
 
   return (
     <SectionWrap id="work" style={{ paddingTop: 56 }}>
+      <SectionPhoto src="/assets/treebelow.jpg" opacity={0.09} />
       <Reveal>
         <Eyebrow color={T.blue}>Case Studies</Eyebrow>
         <h2 className="pf-disp" style={{ fontSize: "clamp(28px,4.5vw,46px)", fontWeight: 600, maxWidth: 760, letterSpacing: "-0.02em", margin: 0 }}>
